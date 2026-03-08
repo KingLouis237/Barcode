@@ -1,0 +1,39 @@
+K-mer statistics for: 
+ - Hash 1: "/home/abane_ashu/flot_project/raw/barcode07.fq"
+ - Hash 2: "/home/abane_ashu/flot_project/assemblies/raven/raven.fasta"
+
+Total K-mers in: 
+ - Hash 1: 391660642
+ - Hash 2: 6401825
+
+Distinct K-mers in:
+ - Hash 1: 77765317
+ - Hash 2: 6316936
+
+Total K-mers only found in:
+ - Hash 1: 116694740
+ - Hash 2: 7905
+
+Distinct K-mers only found in:
+ - Hash 1: 71456286
+ - Hash 2: 7905
+
+Shared K-mers:
+ - Total shared found in hash 1: 274965902
+ - Total shared found in hash 2: 6393920
+ - Distinct shared K-mers: 6309031
+
+Distance between spectra 1 and 2 (all k-mers):
+ - Manhattan distance: 7.14484e+07
+ - Euclidean distance: 5.8516e+07
+ - Cosine distance: 0.00170622
+ - Canberra distance: 754.755
+ - Jaccard distance: 0.918769
+
+Distance between spectra 1 and 2 (shared k-mers):
+ - Manhattan distance: 1.25255e+07
+ - Euclidean distance: 6.35001e+06
+ - Cosine distance: 0.984186
+ - Canberra distance: 682.234
+ - Jaccard distance: 0.99632
+

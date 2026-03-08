@@ -1,0 +1,26 @@
+#                                                                                 --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name             accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#     ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+Utg1914:68966-70684|-     -            573 665824at2            -            547  1.1e-249  828.3   0.0   1   1  1.7e-252  1.3e-249  828.0   0.0     1   533     1   558     1   571 0.97 Utg1914_70 # 68966 # 70684 # -1 # ID=3_70;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=11-12bp;gc_cont=0.581
+Utg1904:265559-267274|+   -            572 665824at2            -            547  1.1e-241  801.8   0.0   1   1  1.6e-244  1.3e-241  801.7   0.0     1   533     1   561     1   571 0.96 Utg1904_227 # 265559 # 267274 # 1 # ID=1_227;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.420
+Utg2010:11786-13714|-     -            643 665824at2            -            547   1.2e-41  141.6   0.8   1   2   1.6e-23   1.3e-20   72.2   0.2    33   196   257   419   228   433 0.87 Utg2010_15 # 11786 # 13714 # -1 # ID=21_15;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.522
+Utg2010:11786-13714|-     -            643 665824at2            -            547   1.2e-41  141.6   0.8   2   2   3.5e-22   2.7e-19   67.8   0.0   387   544   479   633   473   636 0.88 Utg2010_15 # 11786 # 13714 # -1 # ID=21_15;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.522
+Utg1904:1550441-1552363|+ -            641 665824at2            -            547   1.8e-35  121.2   0.1   1   2   8.5e-23   6.6e-20   69.9   0.1    33   195   256   417   237   424 0.90 Utg1904_1407 # 1550441 # 1552363 # 1 # ID=1_1407;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.412
+Utg1904:1550441-1552363|+ -            641 665824at2            -            547   1.8e-35  121.2   0.1   2   2   1.6e-16   1.2e-13   49.2   0.0   403   543   493   631   478   634 0.82 Utg1904_1407 # 1550441 # 1552363 # 1 # ID=1_1407;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.412
+Utg1904:165631-166902|-   -            424 665824at2            -            547   7.1e-12   43.4   0.0   1   2   8.1e-13   6.2e-10   36.9   0.0    57   208   181   333   170   341 0.90 Utg1904_141 # 165631 # 166902 # -1 # ID=1_141;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.421
+Utg1904:165631-166902|-   -            424 665824at2            -            547   7.1e-12   43.4   0.0   2   2    0.0081       6.2    3.9   0.0   391   450   353   414   344   420 0.81 Utg1904_141 # 165631 # 166902 # -1 # ID=1_141;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.421
+Utg1904:2668419-2668883|+ -            155 665824at2            -            547   6.5e-10   36.9   0.1   1   1   9.6e-13   7.4e-10   36.7   0.1   256   366    32   145    10   152 0.89 Utg1904_2421 # 2668419 # 2668883 # 1 # ID=1_2421;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.361
+Utg1904:1452557-1453849|+ -            431 665824at2            -            547   1.5e-07   29.1   0.1   1   2   1.3e-05      0.01   13.1   0.0    37   109     8    84     4    93 0.88 Utg1904_1317 # 1452557 # 1453849 # 1 # ID=1_1317;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.422
+Utg1904:1452557-1453849|+ -            431 665824at2            -            547   1.5e-07   29.1   0.1   2   2   8.4e-06    0.0065   13.8   0.1   462   537   344   419   333   429 0.83 Utg1904_1317 # 1452557 # 1453849 # 1 # ID=1_1317;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.422
+Utg1904:40097-41071|-     -            325 665824at2            -            547     0.029   11.6   0.0   1   2      0.52     4e+02   -2.0   0.0    47    77    14    44    12    48 0.85 Utg1904_36 # 40097 # 41071 # -1 # ID=1_36;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+Utg1904:40097-41071|-     -            325 665824at2            -            547     0.029   11.6   0.0   2   2   0.00013       0.1    9.9   0.0   132   175    88   129    87   142 0.85 Utg1904_36 # 40097 # 41071 # -1 # ID=1_36;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/665824at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_raven/run_bacteria_odb10/hmmer_output/665824at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/665824at2.hmm /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:01:37 2025
+# [ok]

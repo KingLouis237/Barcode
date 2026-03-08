@@ -1,0 +1,16 @@
+#                                                                                  --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name              accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#      ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+contig_1:1163904-1164530|+ -            209 1211060at2           -            164   1.8e-60  201.1   3.4   1   2   1.3e-56   2.2e-53  178.0   4.0     1   133     1   154     1   160 0.92 contig_1_1064 # 1163904 # 1164530 # 1 # ID=1_1064;partial=00;start_type=ATG;rbs_motif=AGGAG;rbs_spacer=5-10bp;gc_cont=0.413
+contig_1:1163904-1164530|+ -            209 1211060at2           -            164   1.8e-60  201.1   3.4   2   2   5.4e-08   9.2e-05   19.9   0.0   117   164   154   208   150   208 0.88 contig_1_1064 # 1163904 # 1164530 # 1 # ID=1_1064;partial=00;start_type=ATG;rbs_motif=AGGAG;rbs_spacer=5-10bp;gc_cont=0.413
+contig_1:3625289-3626341|- -            351 1211060at2           -            164    0.0094   13.4   0.0   1   1     1e-05     0.018   12.5   0.0    76   127    48    99    40   114 0.88 contig_1_3287 # 3625289 # 3626341 # -1 # ID=1_3287;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.411
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1211060at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_flye/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_flye/run_bacteria_odb10/hmmer_output/1211060at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1211060at2.hmm /home/abane_ashu/busco-5.8.0/busco_flye/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 00:53:26 2025
+# [ok]

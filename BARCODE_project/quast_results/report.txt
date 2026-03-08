@@ -1,0 +1,25 @@
+All statistics are based on contigs of size >= 500 bp, unless otherwise noted (e.g., "# contigs (>= 0 bp)" and "Total length (>= 0 bp)" include all contigs).
+
+Assembly                    Flye       Raven      Shasta  
+# contigs (>= 0 bp)         2          28         13      
+# contigs (>= 1000 bp)      2          28         13      
+# contigs (>= 5000 bp)      2          28         13      
+# contigs (>= 10000 bp)     1          28         13      
+# contigs (>= 25000 bp)     1          28         12      
+# contigs (>= 50000 bp)     1          23         11      
+Total length (>= 0 bp)      3780699    6402553    3155007 
+Total length (>= 1000 bp)   3780699    6402553    3155007 
+Total length (>= 5000 bp)   3780699    6402553    3155007 
+Total length (>= 10000 bp)  3773355    6402553    3155007 
+Total length (>= 25000 bp)  3773355    6402553    3144515 
+Total length (>= 50000 bp)  3773355    6209102    3110678 
+# contigs                   2          28         13      
+Largest contig              3773355    3773352    552786  
+Total length                3780699    6402553    3155007 
+GC (%)                      39.08      46.73      39.09   
+N50                         3773355    3773352    437312  
+N90                         3773355    74881      123935  
+auN                         3766039.5  2274652.2  368907.6
+L50                         1          1          4       
+L90                         1          16         9       
+# N's per 100 kbp           0.00       0.00       0.00    

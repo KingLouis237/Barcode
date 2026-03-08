@@ -1,0 +1,693 @@
+<p>xProject: FLOT Genome Assembly Date: 11/08/2025 Machine: WSL Ubuntu
+on Windows Raw reads: raw/barcode07.fq (ONT) Assemblers: Flye, Raven,
+Shasta</p>
+<p>This file shows the exact commands I used and the real outputs.</p>
+<h2 id="tool-versions">Tool versions</h2>
+<pre><code>Flye 2.9.6-b1802
+raven 1.8.3
+Shasta Release 0.14.0
+seqkit v2.10.0</code></pre>
+<h2 id="raw-reads-check-seqkit">Raw reads check (seqkit)</h2>
+<p><strong>Command:</strong> seqkit stats -a raw/barcode07.fq</p>
+<pre><code>file              format  type  num_seqs      sum_len  min_len  avg_len  max_len     Q1     Q2      Q3  sum_gap     N50  N50_num  Q20(%)  Q30(%)  AvgQual  GC(%)  sum_n
+raw/barcode07.fq  FASTQ   DNA     37,054  392,624,046      462   10,596  165,410  3,525  4,294  10,991        0  24,577    4,324   83.98   57.02    16.96  41.29      0</code></pre>
+<p>num_seqs = 37,054 sum_len = 392,624,046 bp (~392.6 Mb) avg_len =
+10,596 bp N50 = 24,577 bp Q20(%) = 83.98 Q30(%) = 57.02 GC(%) =
+41.29</p>
+<pre><code>
+_Interpretation:_
+- Our dataset comprises ~392.6 Mb from 37,054 ONT reads, averaging ~10.6 kb per read. This length profile is well-suited for spanning repetitive regions during assembly.
+- An N50 of 24.6 kb indicates that 50% of all sequenced bases are in reads ≥ 24.6 kb, which is beneficial for achieving higher contiguity in the assembly.
+- Quality metrics show ~84% of bases at Q20 (~99% accuracy) and ~57% at Q30 (~99.9% accuracy), adequate for downstream error correction and polishing.
+- The GC content (~41%) aligns with typical bacterial genomes, suggesting minimal contamination.
+- Based on the total yield, estimated coverage can be calculated as: coverage = 392,624,046 / genome_size(bp). Sufficient coverage (&gt;30×) is essential for a complete and accurate assembly.
+
+## Flye assembly
+**Command:** flye --nano-hq raw/barcode07.fq --out-dir assemblies/flye --threads $(nproc)</code></pre>
+<p>total 9.3M drwxr-xr-x 1 abane_ashu abane_ashu 512 Aug 12 20:50
+00-assembly drwxr-xr-x 1 abane_ashu abane_ashu 512 Aug 12 20:54
+10-consensus drwxr-xr-x 1 abane_ashu abane_ashu 512 Aug 12 20:55
+20-repeat drwxr-xr-x 1 abane_ashu abane_ashu 512 Aug 12 20:55
+30-contigger drwxr-xr-x 1 abane_ashu abane_ashu 512 Aug 12 21:01
+40-polishing -rw-r--r-- 1 abane_ashu abane_ashu 3.7M Aug 12 21:01
+assembly.fasta -rw-r--r-- 1 abane_ashu abane_ashu 5.5M Aug 12 21:01
+assembly_graph.gfa -rw-r--r-- 1 abane_ashu abane_ashu 1.5K Aug 12 21:01
+assembly_graph.gv -rw-r--r-- 1 abane_ashu abane_ashu 120 Aug 12 21:01
+assembly_info.txt -rw-r--r-- 1 abane_ashu abane_ashu 45K Aug 12 21:01
+flye.log -rw-r--r-- 1 abane_ashu abane_ashu 92 Aug 12 21:01
+params.json</p>
+<pre><code>**Contigs &amp; stats**</code></pre>
+<p>contigs: 2 total_len = 3,780,699 bp N50 = 3,773,355 bp largest =
+3,773,355 bp mean_cov = 85×</p>
+<pre><code>_Interpretation:_
+- Two contigs with a dominant ~3.77 Mb scaffold fits a single circular chromosome plus a small extra contig (plasmid or residual fragment).
+- Long-read coverage (~85×) and large N50 indicate high contiguity; polishing reduced alignment error (≈3.7% → ≈2.4%).
+- Note: --plasmids is deprecated in recent Flye; plasmid detection can be handled post-assembly (e.g., mlplasmids/cBAR) or by coverage/circularity checks.
+
+## Raven assembly
+**Command:**</code></pre>
+<p>raven<br />
+--threads $(nproc)<br />
+--graph assemblies/raven/raven.gfa<br />
+raw/barcode07.fq \</p>
+<blockquote>
+<p>assemblies/raven/raven.fasta<br />
+2&gt; logs/raven_withgraph_$(date +%F_%H%M).log</p>
+</blockquote>
+<pre><code>
+**Output files:**</code></pre>
+<p>total 15M -rw-r--r-- 1 abane_ashu abane_ashu 6.2M Aug 12 21:51
+raven.fasta -rw-r--r-- 1 abane_ashu abane_ashu 7.8M Aug 12 21:51
+raven.gfa</p>
+<pre><code>
+**Contigs &amp; stats:**
+**Command:**</code></pre>
+<p>grep -c '^&gt;' assemblies/raven/raven.fasta seqkit stats -a
+assemblies/raven/raven.fasta</p>
+<pre><code>**Results:**</code></pre>
+<p>contigs = 28 sum_len = 6,402,553 bp min_len = 32,563 bp avg_len =
+228,663 bp max_len = 3,773,352 bp N50 = 3,773,352 bp GC(%) = 46.73</p>
+<pre><code>
+_Interpretation:_
+- Raven produced 28 contigs, with the largest (~3.77 Mb) corresponding to the putative main chromosome.
+- Smaller contigs likely represent plasmids, repeat-associated fragments, or assembly artifacts.
+- Total span (~6.40 Mb) exceeds the expected genome size, suggesting redundancy or uncollapsed repeats.
+- N50 equal to the largest contig shows that most bases are concentrated in the main scaffold.
+- GC content (~46.7%) is slightly higher than in the raw reads (41.3%), possibly due to uneven representation of high-GC regions or contamination.
+- The accompanying GFA file can be used for graph-based inspection and refinement before polishing.
+
+## Shasta assembly
+**Command:**</code></pre>
+<p>shasta<br />
+--input raw/barcode07.fq<br />
+--assemblyDirectory assemblies/shasta<br />
+--threads <span class="math inline">\((nproc) \
+--config Nanopore-May2022 \
+2&gt;&amp;1 | tee logs/shasta_\)</span>(date +%F_%H%M).log</p>
+<pre><code>
+**Output files:**</code></pre>
+<p>total 16M -rw-r--r-- 1 abane_ashu abane_ashu 1.6K Aug 12 21:56
+AlignedFractionHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu 856 Aug
+12 21:56 AlignmentDriftHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu
+6.4K Aug 12 21:56 AlignmentMarkerCountHistogram.csv -rw-r--r-- 1
+abane_ashu abane_ashu 913 Aug 12 21:56 AlignmentSkipHistogram.csv
+-rw-r--r-- 1 abane_ashu abane_ashu 886 Aug 12 21:56
+AlignmentTrimHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu 455 Aug 12
+21:56 Assembly-BothStrands-NoSequence.gfa -rw-r--r-- 1 abane_ashu
+abane_ashu 6.1M Aug 12 21:56 Assembly-BothStrands.gfa -rw-r--r-- 1
+abane_ashu abane_ashu 3.1M Aug 12 21:56 Assembly.fasta -rw-r--r-- 1
+abane_ashu abane_ashu 3.1M Aug 12 21:56 Assembly.gfa -rw-r--r-- 1
+abane_ashu abane_ashu 597 Aug 12 21:56 AssemblySummary.csv -rw-r--r-- 1
+abane_ashu abane_ashu 9.3K Aug 12 21:56 AssemblySummary.html -rw-r--r--
+1 abane_ashu abane_ashu 3.5K Aug 12 21:56 AssemblySummary.json
+-rw-r--r-- 1 abane_ashu abane_ashu 8.6K Aug 12 21:55
+Binned-ReadLengthHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu 601
+Aug 12 21:56 DisjointSetsHistogram.csv -rw-r--r-- 1 abane_ashu
+abane_ashu 27 Aug 12 21:55 DuplicateReads.csv -rw-r--r-- 1 abane_ashu
+abane_ashu 13K Aug 12 21:55 LowHashBucketHistogram.csv -rw-r--r-- 1
+abane_ashu abane_ashu 439 Aug 12 21:56
+MarkerGraphEdgeCoverageHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu
+433 Aug 12 21:56 MarkerGraphVertexCoverageHistogram.csv -rw-r--r-- 1
+abane_ashu abane_ashu 6.1K Aug 12 21:56 ReadGraphComponents.csv
+-rw-r--r-- 1 abane_ashu abane_ashu 395K Aug 12 21:55
+ReadLengthHistogram.csv -rw-r--r-- 1 abane_ashu abane_ashu 594K Aug 12
+21:55 ReadLowHashStatistics.csv -rw-r--r-- 1 abane_ashu abane_ashu 1.8M
+Aug 12 21:56 ReadSummary.csv -rw-r--r-- 1 abane_ashu abane_ashu 98K Aug
+12 21:55 SuppressedAlignmentCandidates.csv -rw-r--r-- 1 abane_ashu
+abane_ashu 7.3K Aug 12 21:56 index.html -rw-r--r-- 1 abane_ashu
+abane_ashu 7.7K Aug 12 21:56 performance.log -rw-r--r-- 1 abane_ashu
+abane_ashu 5.4K Aug 12 21:55 shasta.conf -rw-r--r-- 1 abane_ashu
+abane_ashu 6.8K Aug 12 21:56 stdout.log</p>
+<pre><code>
+**Contigs &amp; stats:**
+**Command:**</code></pre>
+<p>grep -c '^&gt;' assemblies/shasta/Assembly.fasta seqkit stats -a
+assemblies/shasta/Assembly.fasta</p>
+<pre><code>**Results:**</code></pre>
+<p>contigs = 13 sum_len = 3,155,007 bp min_len = 10,492 bp avg_len =
+242,693 bp max_len = 552,786 bp N50 = 437,312 bp GC(%) = 39.09</p>
+<pre><code>
+_Interpretation:_
+- Shasta assembled 13 contigs totaling ~3.16 Mb, with the largest contig just over 0.55 Mb.
+- The N50 of ~437 kb is much lower than Flye and Raven, reflecting more fragmentation.
+- Shasta’s filtering removed shorter reads (&lt;10 kb), resulting in fewer input reads (9,968) but a higher average read length (~28 kb).
+- The total assembly span is smaller than the expected genome size, indicating possible underassembly or loss of low-coverage regions.
+- GC content (~39.1%) is notably lower than in raw reads (41.3%), suggesting either incomplete assembly of GC-rich regions or potential bias in contig retention.
+- The output includes GFA graphs and summary reports (HTML/CSV) for detailed structural analysis.
+## Key outputs &amp; logs
+
+- Flye: assemblies/flye/assembly.fasta, assemblies/flye/assembly_graph.gfa, logs/flye_*.log
+- Raven: assemblies/raven/raven.fasta, assemblies/raven/raven.gfa (if created), logs/raven_*.log
+- Shasta: assemblies/shasta/Assembly.fasta, assemblies/shasta/Assembly.gfa, logs/shasta_*.log
+
+## Assembly evaluation with QUAST
+**Reason for method choice:**
+- QUAST is used to evaluate genome assemblies by computing metrics like N50, L50, total length, GC content, and contig counts.
+- Initially, we attempted to install QUAST via Conda in a separate &#39;eval&#39; environment, but dependency conflicts (simplejson mismatch) made installation impossible.
+- As a workaround, we downloaded QUAST directly from its GitHub release, which works regardless of Conda/Python version conflicts.
+- Running QUAST in the existing &#39;assem&#39; environment keeps all tools for the assembly stage in one place and avoids unnecessary environment switching.
+
+**Commands:**</code></pre>
+<p>cd ~ wget <a
+href="https://github.com/ablab/quast/releases/download/quast_5.2.0/quast-5.2.0.tar.gz">https://github.com/ablab/quast/releases/download/quast_5.2.0/quast-5.2.0.tar.gz</a>
+tar -xzf quast-5.2.0.tar.gz cd quast-5.2.0 python3 quast.py<br />
+-o ~/flot_project/eval/quast<br />
+-t <span class="math inline">\((nproc) \
+--labels Flye,Raven,Shasta \
+~/flot_project/assemblies/flye/assembly.fasta \
+~/flot_project/assemblies/raven/raven.fasta \
+~/flot_project/assemblies/shasta/Assembly.fasta \
+2&gt;&amp;1 | tee ~/flot_project/logs/quast_\)</span>(date
++%F_%H%M).log</p>
+<pre><code>
+**Key metrics from report.tsv:**</code></pre>
+<p>Assembler #contigs(&gt;=500bp) N50 L50 Total_length GC% Flye 2
+3,773,355 1 3,780,699 39.08 Raven 28 3,773,352 1 6,402,553 46.73 Shasta
+13 437,312 4 3,155,007 39.09</p>
+<pre><code>
+**Raw grep outputs from report.tsv:**
+**Command:**</code></pre>
+<p>grep -P 'Assembly|# contigs (&gt;= 500 bp)' eval/quast/report.tsv</p>
+<pre><code>**Result:**</code></pre>
+<p>Assembly Flye Raven Shasta</p>
+<pre><code>
+**Command:**</code></pre>
+<p>grep "contigs" eval/quast/report.tsv</p>
+<pre><code>**Result:**</code></pre>
+<h1 id="contigs--0-bp-2-28-13">contigs (&gt;= 0 bp) 2 28 13</h1>
+<h1 id="contigs--1000-bp-2-28-13">contigs (&gt;= 1000 bp) 2 28 13</h1>
+<h1 id="contigs--5000-bp-2-28-13">contigs (&gt;= 5000 bp) 2 28 13</h1>
+<h1 id="contigs--10000-bp-1-28-13">contigs (&gt;= 10000 bp) 1 28 13</h1>
+<h1 id="contigs--25000-bp-1-28-12">contigs (&gt;= 25000 bp) 1 28 12</h1>
+<h1 id="contigs--50000-bp-1-23-11">contigs (&gt;= 50000 bp) 1 23 11</h1>
+<h1 id="contigs-2-28-13">contigs 2 28 13</h1>
+<pre><code>_Note:_ The **-P** regex didn’t match the contig row on this build, so we used a simpler **grep &quot;contigs&quot;** to extract counts.
+
+_Interpretation:_
+- **Flye** produced the most contiguous assembly with the highest N50 and lowest contig count, indicating a very continuous genome assembly.
+- **Raven** matched Flye in N50 but had far more contigs, which may indicate unresolved repeats or duplicated regions.
+- **Shasta** produced a more fragmented assembly with the lowest N50 and higher contig count, suggesting less contiguity.
+- GC% values align with expected bacterial genome ranges (~39–47%), suggesting assemblies are biologically plausible.
+- The HTML report provides interactive visualization, and the Icarus viewer allows inspection of contig placement.
+
+## Assembly evaluation with KAT
+**Reason for method choice:**
+- KAT (K-mer Analysis Toolkit) compares k-mer spectra between raw reads and assemblies.
+- It measures assembly completeness, detects missing regions, and can highlight misassemblies.
+- The &#39;comp&#39; mode checks which k-mers from the reads are present in the assembly and vice versa.
+- A dedicated environment **kat_env** was created because KAT had strict dependencies (old Boost version) that conflicted with Python versions in &#39;assem&#39; and &#39;eval&#39; environments.
+- This separation ensures we can run KAT without breaking other tools in the pipeline.
+
+### Flye assembly — KAT results
+**Command:**</code></pre>
+<p>kat comp<br />
+-o ~/flot_project/eval/kat_flye<br />
+~/flot_project/raw/barcode07.fq<br />
+~/flot_project/assemblies/flye/assembly.fasta</p>
+<pre><code>**Key statistics:**</code></pre>
+<p>Total k-mers in raw reads: 391,660,642 Total k-mers in assembly:
+3,780,647 Distinct k-mers in raw reads: 77,765,317 Distinct k-mers in
+assembly: 3,725,038 Only in raw reads (distinct): 74,040,427 Only in
+assembly (distinct): 148 Shared distinct k-mers: 3,724,890 Estimated
+genome size: 3.77 Mb Estimated heterozygosity: 0.04% Assembly
+completeness: 99.85%</p>
+<pre><code>_Interpretation:_
+- Extremely high completeness (99.85%) — almost all true sequence from the reads is represented.
+- Very few unique assembly k-mers (148) — almost no erroneous sequence.
+- Genome size estimate matches expectations (~3.77 Mb).
+- K-mer profile shows a clean 1X peak, no major duplication peaks.
+
+### Raven assembly — KAT results
+**Command:**</code></pre>
+<p>kat comp<br />
+-o ~/flot_project/eval/kat_raven<br />
+~/flot_project/raw/barcode07.fq<br />
+~/flot_project/assemblies/raven/raven.fasta</p>
+<pre><code>**Key statistics:**</code></pre>
+<p>Total k-mers in raw reads: 391,660,642 Total k-mers in assembly:
+6,401,825 Distinct k-mers in raw reads: 77,765,317 Distinct k-mers in
+assembly: 6,316,936 Only in raw reads (distinct): 71,456,286 Only in
+assembly (distinct): 7,905 Shared distinct k-mers: 6,309,031 Estimated
+genome size: 3.77 Mb Estimated heterozygosity: 0.04% Assembly
+completeness: 99.90%</p>
+<pre><code>_Interpretation:_
+- Completeness is marginally higher than Flye (99.90%).
+- Slightly more unique k-mers than Flye, but still very low (7,905) — good assembly accuracy.
+- Despite having 28 contigs (fragmented), completeness is nearly perfect.
+- Genome size matches expected value, no large-scale duplications detected.
+
+### Shasta assembly — KAT results
+**Command:**</code></pre>
+<p>kat comp<br />
+-o ~/flot_project/eval/kat_shasta<br />
+~/flot_project/raw/barcode07.fq<br />
+~/flot_project/assemblies/shasta/Assembly.fasta</p>
+<pre><code>**Key statistics:**</code></pre>
+<p>Total k-mers in raw reads: 391,660,642 Total k-mers in assembly:
+3,154,669 Distinct k-mers in raw reads: 77,765,317 Distinct k-mers in
+assembly: 3,112,375 Only in raw reads (distinct): 74,655,961 Only in
+assembly (distinct): 3,019 Shared distinct k-mers: 3,109,356 Estimated
+genome size: 3.77 Mb Estimated heterozygosity: 0.04% Assembly
+completeness: 88.41%</p>
+<pre><code>_Interpretation:_
+- Much lower completeness (88.41%) — missing ~12% of genome sequence.
+- Still relatively low number of unique assembly k-mers (3,019) — minimal false positives.
+- Missing k-mers likely due to Shasta&#39;s stringent filtering of shorter reads and assembly breaks.
+- Completeness results align with QUAST&#39;s lower contiguity metrics (N50=437 kb).
+
+## BUSCO genome completeness assessment
+
+**Rationale &amp; setup:**
+- BUSCO (Benchmarking Universal Single-Copy Orthologs) was used to assess the completeness of each assembly (Flye, Raven, Shasta) against the *bacteria_odb10* lineage dataset.
+- We created a dedicated conda environment `busco_env` instead of using the KAT or assembly environments because BUSCO has many version-sensitive dependencies (Python, HMMER, BLAST, Prodigal, Augustus, SEPP) that can conflict with other tools.
+- Initial attempts to install BUSCO from bioconda failed due to dependency resolution issues, so we downloaded BUSCO v5.8.0 directly from its GitLab repository and installed it manually.
+- Missing dependencies (e.g., pandas, numpy, matplotlib, biopython, bbtools, requests) were installed incrementally as BUSCO reported them missing during runs.
+- Installing `bbtools` was necessary because BUSCO uses it for pre-processing FASTA/FASTQ input.
+- Installing `requests` resolved a Python import error when BUSCO attempted to fetch lineage datasets.
+- The bacteria_odb10 dataset was chosen because our assemblies are bacterial in origin, making the completeness metrics biologically relevant.
+
+**Environment creation &amp; installation:**</code></pre>
+<p>conda create -y -n busco_env python=3.10 conda activate busco_env
+wget <a
+href="https://gitlab.com/ezlab/busco/-/archive/5.8.0/busco-5.8.0.tar.gz">https://gitlab.com/ezlab/busco/-/archive/5.8.0/busco-5.8.0.tar.gz</a>
+tar -xzf busco-5.8.0.tar.gz cd busco-5.8.0 conda install -y pandas numpy
+matplotlib biopython hmmer blast augustus prodigal sepp openmpi ucx
+conda install -y -c bioconda bbmap pip install requests pip install
+.</p>
+<pre><code>
+_Note:_ Each installation step was tested by running `busco --help` to confirm functionality before proceeding.
+
+**BUSCO runs &amp; results:**
+
+### Flye assembly
+**Command:**</code></pre>
+<p>busco<br />
+-i ~/flot_project/assemblies/flye/assembly.fasta<br />
+-l bacteria_odb10<br />
+-o busco_flye<br />
+-m genome<br />
+-f</p>
+<pre><code>**Results:**</code></pre>
+<p>C:98.4% [S:98.4%, D:0.0%], F:1.6%, M:0.0%, n:124 122 Complete BUSCOs
+122 Complete &amp; single-copy 0 Complete &amp; duplicated 2 Fragmented
+0 Missing</p>
+<pre><code>_Interpretation:_ Flye produced a highly complete assembly (~98.4% completeness), with no duplicated BUSCOs and only 2 fragmented genes. This suggests an assembly that is both accurate and non-redundant, consistent with Flye&#39;s performance in KAT and QUAST.
+
+### Raven assembly
+**Command:**</code></pre>
+<p>busco<br />
+-i ~/flot_project/assemblies/raven/raven.fasta<br />
+-l bacteria_odb10<br />
+-o busco_raven<br />
+-m genome<br />
+-f</p>
+<pre><code>**Results:**</code></pre>
+<p>C:99.2% [S:54.8%, D:44.4%], F:0.8%, M:0.0%, n:124 123 Complete BUSCOs
+68 Complete &amp; single-copy 55 Complete &amp; duplicated 1 Fragmented
+0 Missing</p>
+<pre><code>_Interpretation:_ Raven&#39;s completeness is slightly higher than Flye (99.2%), but with a large proportion (44.4%) of duplicated BUSCOs. This likely reflects uncollapsed haplotypes or repetitive elements being assembled into separate contigs. The duplication rate suggests redundancy in the assembly, which could inflate genome size metrics.
+
+### Shasta assembly
+**Command:**</code></pre>
+<p>busco<br />
+-i ~/flot_project/assemblies/shasta/Assembly.fasta<br />
+-l bacteria_odb10<br />
+-o busco_shasta<br />
+-m genome<br />
+-f</p>
+<pre><code>**Results:**</code></pre>
+<p>C:78.2% [S:78.2%, D:0.0%], F:5.6%, M:16.1%, n:124 97 Complete BUSCOs
+97 Complete &amp; single-copy 0 Complete &amp; duplicated 7 Fragmented
+20 Missing</p>
+<pre><code>_Interpretation:_ Shasta shows substantially lower completeness (78.2%) and the highest proportion of missing BUSCOs (16.1%). The absence of duplicated BUSCOs suggests that its lower completeness is not due to redundancy but rather incomplete assembly — possibly due to aggressive read filtering and fewer contigs in the output. This aligns with QUAST results showing smaller total genome span for Shasta.
+
+## Assembly Graph Visualization with Bandage
+
+**Reasoning &amp; Setup:**
+- After assembly and quality assessment with QUAST, KAT, and BUSCO, it is important to visualize the actual assembly graphs.
+- Assembly statistics can be misleading if structural misassemblies or unresolved repeats exist — Bandage lets us see the contig graph structure from GFA files.
+- Each assembler (Flye, Raven, Shasta) produces a GFA file describing contigs and their connections.
+- Visual inspection helps confirm genome circularization, detect plasmids, and identify fragmentation or unresolved repeats.
+
+We faced several challenges in running Bandage in our environment:
+- Initial attempt to run `Bandage GUI` failed with &#39;Invalid option: GUI&#39; — Bandage is called without arguments to open the GUI.
+- Running Bandage in headless mode (no display) caused Qt platform plugin errors.
+- To overcome this, we generated static PNG images using `Bandage image` instead of relying on the interactive GUI.
+
+We created a dedicated Conda environment for Bandage to isolate dependencies:
+```bash
+conda create -y -n bandage_env -c bioconda bandage
+conda activate bandage_env</code></pre>
+<p><strong>Commands Used:</strong></p>
+<ol type="1">
+<li>Generate PNG graphs from each assembler's GFA output:</li>
+</ol>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Bandage</span> image ~/flot_project/assemblies/flye/assembly_graph.gfa docs/flye_graph.png</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Bandage</span> image ~/flot_project/assemblies/raven/raven.gfa docs/raven_graph.png</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Bandage</span> image ~/flot_project/assemblies/shasta/Assembly.gfa docs/shasta_graph.png</span></code></pre></div>
+<ol start="2" type="1">
+<li>Verify PNG outputs and sizes:</li>
+</ol>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> docs/<span class="pp">*</span>.png</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Output:</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">-rw-r--r--</span> 1 abane_ashu abane_ashu  77K Aug 14 11:53 docs/flye_graph.png</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="ex">-rw-r--r--</span> 1 abane_ashu abane_ashu  66K Aug 14 11:53 docs/raven_graph.png</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="ex">-rw-r--r--</span> 1 abane_ashu abane_ashu 9.3K Aug 14 11:53 docs/shasta_graph.png</span></code></pre></div>
+<ol start="3" type="1">
+<li>Open PNGs in Windows for inspection:</li>
+</ol>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">explorer.exe</span> docs/flye_graph.png</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">explorer.exe</span> docs/raven_graph.png</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="ex">explorer.exe</span> docs/shasta_graph.png</span></code></pre></div>
+<p><strong>Visuals:</strong></p>
+<p><strong>Outputs &amp; Interpretation:</strong></p>
+<ul>
+<li><strong>Flye graph:</strong> Shows a large circular contig (likely
+the chromosome) plus a small, compact subgraph — indicative of plasmid
+or unresolved repeat.</li>
+<li><strong>Raven graph:</strong> Displays a large circular contig with
+several smaller linear fragments — suggests main genome is mostly
+resolved, with extra contigs possibly representing repeats, plasmids, or
+misassemblies.</li>
+<li><strong>Shasta graph:</strong> Highly fragmented into multiple
+disconnected contigs — confirms QUAST and BUSCO results indicating lower
+completeness and more fragmentation.</li>
+</ul>
+<p><em>Key Takeaways:</em></p>
+<ul>
+<li>Flye produced the cleanest and most contiguous assembly graph,
+matching its high BUSCO completeness.</li>
+<li>Raven is complete but contains more duplicated BUSCOs, reflected in
+multiple disconnected graph components.</li>
+<li>Shasta's fragmentation is visually obvious, aligning with its lower
+BUSCO score and smaller assembly span.</li>
+</ul>
+<h2
+id="16s-rrna-extraction-blastn-identification-and-phylogenetic-analysis">16S
+rRNA Extraction, BLASTN Identification, and Phylogenetic Analysis</h2>
+<p><strong>Objective:</strong> To extract representative 16S rRNA
+sequences from each assembler output (Flye, Raven, Shasta), identify
+their closest bacterial species via BLASTN, and construct a phylogenetic
+tree for comparative analysis.</p>
+<p><strong>1. Environment Setup</strong> We created a dedicated
+environment to avoid package conflicts and ensure reproducibility:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-y</span> <span class="at">-n</span> ssu_env <span class="at">-c</span> bioconda barrnap bedtools seqkit blast mafft trimal iqtree entrez-direct</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate ssu_env</span></code></pre></div>
+<ul>
+<li><strong>barrnap</strong>: Predicts rRNA genes (5S, 16S, 23S) using
+HMM models.</li>
+<li><strong>bedtools</strong>: Extracts sequences from assemblies using
+genomic coordinates.</li>
+<li><strong>seqkit</strong>: Sorts, filters, and manipulates FASTA/FASTQ
+files.</li>
+<li><strong>blast</strong>: Compares sequences against NCBI
+databases.</li>
+<li><strong>mafft</strong>: Performs multiple sequence alignment.</li>
+<li><strong>trimal</strong>: Removes poorly aligned regions to improve
+phylogenetic accuracy.</li>
+<li><strong>iqtree</strong>: Infers maximum likelihood phylogenetic
+trees.</li>
+<li><strong>entrez-direct</strong>: Fetches sequences directly from
+NCBI.</li>
+</ul>
+<p><strong>2. 16S rRNA Detection with barrnap</strong> We used barrnap
+to scan assemblies for bacterial 16S rRNA genes and output GFF
+files:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/flot_project/eval/16s</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">barrnap</span> <span class="at">--kingdom</span> bac ~/flot_project/assemblies/flye/assembly.fasta <span class="op">&gt;</span> ~/flot_project/eval/16s/flye.gff</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">barrnap</span> <span class="at">--kingdom</span> bac ~/flot_project/assemblies/raven/raven.fasta <span class="op">&gt;</span> ~/flot_project/eval/16s/raven.gff</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="ex">barrnap</span> <span class="at">--kingdom</span> bac ~/flot_project/assemblies/shasta/Assembly.fasta <span class="op">&gt;</span> ~/flot_project/eval/16s/shasta.gff</span></code></pre></div>
+<p>We then filtered the GFF files to keep only 16S rRNA hits:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;$3==&quot;rRNA&quot; &amp;&amp; /product=16S/&#39;</span> ~/flot_project/eval/16s/flye.gff <span class="op">&gt;</span> ~/flot_project/eval/16s/flye_16S.gff</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;$3==&quot;rRNA&quot; &amp;&amp; /product=16S/&#39;</span> ~/flot_project/eval/16s/raven.gff <span class="op">&gt;</span> ~/flot_project/eval/16s/raven_16S.gff</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;$3==&quot;rRNA&quot; &amp;&amp; /product=16S/&#39;</span> ~/flot_project/eval/16s/shasta.gff <span class="op">&gt;</span> ~/flot_project/eval/16s/shasta_16S.gff</span></code></pre></div>
+<p><strong>3. Extracting 16S Sequences</strong> We used bedtools to
+extract nucleotide sequences for the predicted 16S rRNAs:</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> getfasta <span class="at">-fi</span> ~/flot_project/assemblies/flye/assembly.fasta <span class="at">-bed</span> ~/flot_project/eval/16s/flye_16S.gff <span class="at">-s</span> <span class="op">&gt;</span> ~/flot_project/eval/16s/flye_16S.fasta</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> getfasta <span class="at">-fi</span> ~/flot_project/assemblies/raven/raven.fasta <span class="at">-bed</span> ~/flot_project/eval/16s/raven_16S.gff <span class="at">-s</span> <span class="op">&gt;</span> ~/flot_project/eval/16s/raven_16S.fasta</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="ex">bedtools</span> getfasta <span class="at">-fi</span> ~/flot_project/assemblies/shasta/Assembly.fasta <span class="at">-bed</span> ~/flot_project/eval/16s/shasta_16S.gff <span class="at">-s</span> <span class="op">&gt;</span> ~/flot_project/eval/16s/shasta_16S.fasta</span></code></pre></div>
+<p>We sorted sequences by length and kept only the longest per
+assembler:</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ASM <span class="kw">in</span> flye raven shasta</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">seqkit</span> sort <span class="at">-l</span> <span class="at">-r</span> ~/flot_project/eval/16s/<span class="va">${ASM}</span>_16S.fasta <span class="kw">|</span> <span class="ex">seqkit</span> head <span class="at">-n</span> 1 <span class="op">&gt;</span> ~/flot_project/eval/16s/<span class="va">${ASM}</span>_16S_rep.fasta</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<p><strong>4. BLASTN Species Identification</strong> We ran BLASTN for
+each representative 16S sequence against the NCBI nt database:</p>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ASM <span class="kw">in</span> flye raven shasta</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">blastn</span> <span class="at">-query</span> ~/flot_project/eval/16s/<span class="va">${ASM}</span>_16S_rep.fasta <span class="at">-db</span> nt <span class="at">-remote</span> <span class="dt">\</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-entrez_query</span> <span class="st">&quot;Bacteria[ORGN] AND 16S[Title]&quot;</span> <span class="dt">\</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-max_target_seqs</span> 10 <span class="at">-evalue</span> 1e-50 <span class="dt">\</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-outfmt</span> <span class="st">&quot;6 qseqid sacc pident length qlen qcovs bitscore stitle&quot;</span> <span class="dt">\</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> ~/flot_project/eval/16s/<span class="va">${ASM}</span>_blastn.tsv</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<p>Explanation of key parameters:</p>
+<ul>
+<li><strong>-entrez_query</strong>: Restricts search to bacterial 16S
+sequences.</li>
+<li><strong>-max_target_seqs 10</strong>: Limits results to top 10
+hits.</li>
+<li><strong>-evalue 1e-50</strong>: Ensures matches are highly
+significant.</li>
+<li><strong>-outfmt 6</strong>: Outputs tabular format with specific
+columns. <strong>Inspect Top Hit for Each Assembly</strong>
+Command:</li>
+</ul>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ASM <span class="kw">in</span> flye raven shasta<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span> <span class="at">-n</span> 1 ~/flot_project/eval/16s/<span class="va">${ASM}</span>_blastn.tsv</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<p>Output:</p>
+<pre class="text"><code>Flye:   Acinetobacter baumannii (100.000% identity, 1529/1533 bp, strain 16842)
+Raven:  Klebsiella pneumoniae (99.610% identity, 1537/1537 bp, strain NUBRI-K)
+Shasta: Acinetobacter baumannii (99.804% identity, 1530/1534 bp, strain 16842)</code></pre>
+<p>** Building the Phylogenetic Tree** We retrieved reference sequences
+for the top 15 Flye BLASTN hits:</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span> <span class="at">-f2</span> ~/flot_project/eval/16s/flye_blastn.tsv <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 15 <span class="kw">|</span> <span class="fu">paste</span> <span class="at">-sd,</span> <span class="at">-</span> <span class="kw">|</span> <span class="dt">\</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">xargs</span> <span class="at">-I{}</span> sh <span class="at">-c</span> <span class="st">&#39;efetch -db nucleotide -id {} -format fasta&#39;</span> <span class="op">&gt;</span> ~/flot_project/eval/16s/ref_seqs.fasta</span></code></pre></div>
+<p>We combined assembler sequences with reference sequences:</p>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> ~/flot_project/eval/16s/<span class="pp">*</span>_16S_rep.fasta ~/flot_project/eval/16s/ref_seqs.fasta <span class="op">&gt;</span> ~/flot_project/eval/16s/all_16S.fasta</span></code></pre></div>
+<p>We aligned sequences with MAFFT and trimmed with trimAl:</p>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mafft</span> <span class="at">--auto</span> <span class="at">--thread</span> <span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span> ~/flot_project/eval/16s/all_16S.fasta <span class="op">&gt;</span> ~/flot_project/eval/16s/all_16S.aln.fasta</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">trimal</span> <span class="at">-automated1</span> <span class="at">-in</span> ~/flot_project/eval/16s/all_16S.aln.fasta <span class="at">-out</span> ~/flot_project/eval/16s/all_16S.trim.fasta</span></code></pre></div>
+<p>We built the tree with IQ-TREE:</p>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">iqtree</span> <span class="at">-s</span> ~/flot_project/eval/16s/all_16S.trim.fasta <span class="at">-m</span> MFP <span class="at">-bb</span> 1000 <span class="at">-alrt</span> 1000 <span class="at">-nt</span> AUTO</span></code></pre></div>
+<p>We used the .contree file (consensus tree with bootstrap support) for
+visualization in iTOL:</p>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ~/flot_project/eval/16s/all_16S.trim.fasta.contree ~/flot_project/eval/16s/16S_tree.nwk</span></code></pre></div>
+<p>We then downloaded the 16S_tree.nwk file and uploaded it to ITOL
+(Interactive Tree of Life), to visualise and manipulate the phylogenetic
+tree and create a PDF file of the phylogenetic relationship between all
+15 bacteria. With our main focus being the top 3 bacteria we identified
+earlier from the blastN output:</p>
+<div class="sourceCode" id="cb49"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ~/flot_project/eval/16s/16S_tree.nwk /mnt/c/Users/Louis/Downloads/</span></code></pre></div>
+<h3 id="checking-top-blastn-matches-first-15-hits">Checking Top BLASTN
+Matches (First 15 Hits)</h3>
+<p>Before building the phylogenetic tree, we wanted to examine the
+<strong>first 15 BLASTN hits</strong> for each assembler’s
+representative 16S rRNA sequence. This step helps us:</p>
+<ul>
+<li>Identify the most likely species matches.</li>
+<li>See whether the same or different bacterial species appear across
+assemblies.</li>
+<li>Select relevant reference sequences for phylogenetic tree
+construction.</li>
+</ul>
+<p>Command used:</p>
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-n</span> 15 ~/flot_project/eval/16s/<span class="pp">*</span>_blastn.tsv</span></code></pre></div>
+<p>Explanation:</p>
+<ul>
+<li><strong>head -n 15</strong>: Shows the first 15 lines of each BLASTN
+result file.</li>
+<li>This allows quick inspection of species names, accession numbers,
+and % identity.</li>
+</ul>
+<p>Output:</p>
+<pre class="text"><code>==&gt; flye_blastn.tsv &lt;==
+contig_1:1206335-1207868(+)     HE651910        100.000 1529    1533    100     2824    Acinetobacter baumannii 16S rRNA gene, strain 16842
+contig_1:1206335-1207868(+)     6YPU_2  99.870  1533    1533    100     2820    Chain 2, 16S ribosomal RNA
+contig_1:1206335-1207868(+)     MT793124        99.870  1533    1533    100     2820    Acinetobacter baumannii strain AB1 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     NR_117620       99.869  1529    1533    100     2813    Acinetobacter baumannii strain ATCC 19606 16S ribosomal RNA, partial sequence
+contig_1:1206335-1207868(+)     EU883589        99.869  1529    1533    100     2813    Acinetobacter baumannii strain AIIMS 11 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     KT964444        99.804  1529    1533    100     2808    Acinetobacter baumannii strain HNHB02 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     KM408612        99.804  1529    1533    100     2808    Acinetobacter baumannii strain LJ17 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     MH393496        99.804  1528    1533    100     2806    Acinetobacter baumannii strain FOP220 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     PQ722327        99.869  1525    1533    99      2806    Acinetobacter baumannii strain Aci_bau1 16S ribosomal RNA gene, partial sequence
+contig_1:1206335-1207868(+)     PQ721429        99.869  1525    1533    99      2806    Acinetobacter baumannii strain Ac5 16S ribosomal RNA gene, partial sequence
+
+==&gt; raven_blastn.tsv &lt;==
+Utg1930:37498-39035(-)  MN429133        99.610  1537    1537    100     2804    Klebsiella pneumoniae strain NUBRI-K 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  PQ865839        99.610  1537    1537    100     2804    Uncultured Klebsiella sp. clone K-pneumoniae-1 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  PP340960        99.610  1537    1537    100     2804    Klebsiella sp. strain SG01 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  AB642255        99.674  1533    1537    100     2802    Klebsiella pneumoniae gene for 16S rRNA, partial sequence
+Utg1930:37498-39035(-)  MZ401370        99.545  1537    1537    100     2798    Klebsiella pneumoniae strain M27 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  MZ401365        99.545  1537    1537    100     2798    Klebsiella pneumoniae strain M3 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  JN644536        99.738  1526    1537    99      2795    Klebsiella pneumoniae strain BR10_2A 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  MZ401368        99.480  1537    1537    100     2793    Klebsiella pneumoniae strain M20 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  MZ401364        99.480  1537    1537    100     2793    Klebsiella pneumoniae strain M2 16S ribosomal RNA gene, partial sequence
+Utg1930:37498-39035(-)  AB642256        99.543  1533    1537    100     2791    Klebsiella pneumoniae gene for 16S rRNA, partial sequence
+
+==&gt; shasta_blastn.tsv &lt;==
+18:21581-23115(+)       HE651910        99.804  1530    1534    100     2808    Acinetobacter baumannii 16S rRNA gene, strain 16842
+18:21581-23115(+)       6YPU_2  99.674  1534    1534    100     2804    Chain 2, 16S ribosomal RNA
+18:21581-23115(+)       MT793124        99.674  1534    1534    100     2804    Acinetobacter baumannii strain AB1 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       KM408612        99.739  1530    1534    100     2802    Acinetobacter baumannii strain LJ17 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       MH393496        99.738  1529    1534    100     2800    Acinetobacter baumannii strain FOP220 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       EU078177        99.738  1529    1534    100     2800    Acinetobacter baumannii strain BD5 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       NR_117620       99.673  1530    1534    100     2796    Acinetobacter baumannii strain ATCC 19606 16S ribosomal RNA, partial sequence
+18:21581-23115(+)       EU883589        99.673  1530    1534    100     2796    Acinetobacter baumannii strain AIIMS 11 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       KT964444        99.608  1530    1534    100     2791    Acinetobacter baumannii strain HNHB02 16S ribosomal RNA gene, partial sequence
+18:21581-23115(+)       PQ722327        99.672  1526    1534    99      2789    Acinetobacter baumannii strain Aci_bau1 16S ribosomal RNA gene, partial sequence</code></pre>
+<p>** Interpretation** Our comparative genome assembly and evaluation
+pipeline revealed distinct strengths and limitations among Flye, Raven,
+and Shasta, with downstream 16S rRNA analysis providing a crucial
+biological perspective. Flye generated the most contiguous genome (N50 ≈
+3.77 Mb, 2 contigs), near-complete k-mer recovery (99.85% completeness
+by KAT), and high BUSCO completeness (98.4%, no duplications), supported
+by a clean circular assembly graph. Raven matched Flye’s N50 but
+produced 28 contigs and exhibited an unusually high BUSCO duplication
+rate (44.4%), suggesting unresolved repeat collapse or redundancy
+despite excellent k-mer completeness (99.90%). Shasta, in contrast,
+produced the most fragmented assembly (N50 ≈ 437 kb, BUSCO 78.2%) with
+lower k-mer completeness (88.41%), yet intriguingly shared the same top
+16S BLASTN hit as Flye (<em>Acinetobacter baumannii</em>, ~100%
+identity). Raven’s divergence (<em>Klebsiella pneumoniae</em>) despite
+high completeness underscores that single-gene taxonomic inference can
+be impacted by assembly artifacts or contamination, and that
+whole-genome quality does not always align with locus-specific
+phylogenetic placement.</p>
+<p>🔍 <strong>Key Insight — Shasta–Flye Convergence Despite Divergent
+Quality</strong> Shasta’s markedly lower completeness but identical 16S
+rRNA match to Flye demonstrates that highly conserved loci can remain
+intact even in fragmented assemblies, provided the raw reads
+sufficiently cover those regions. This convergence, contrasted with
+Raven’s phylogenetic divergence, highlights the importance of
+integrating both genome-wide metrics (QUAST, KAT, BUSCO, Bandage) and
+locus-specific analyses (BLASTN, phylogeny) for robust, biologically
+meaningful taxonomic conclusions.</p>
+<h2
+id="genome-annotation-and-metabolic-capacity-analysis-prokka--blastkoala">Genome
+Annotation and Metabolic Capacity Analysis (Prokka + BlastKOALA)</h2>
+<h3 id="1-environment-setup">1. Environment Setup</h3>
+<p>We created a dedicated Conda environment to ensure Prokka ran with
+all necessary dependencies without conflicting with other tools in our
+workflow: conda create -n annotation_env -c bioconda -c conda-forge
+prokka conda activate annotation_env This isolated environment
+guaranteed reproducibility and minimized dependency issues.</p>
+<h3 id="2-running-prokka">2. Running Prokka</h3>
+<p>Prokka is a rapid prokaryotic genome annotation tool. It predicts
+coding sequences (CDS), rRNAs, tRNAs, and assigns functional annotations
+by comparing against curated databases. We annotated the assemblies from
+all three assemblers:</p>
+<h1 id="flye">Flye</h1>
+<p>prokka ~/flot_project/assemblies/flye/assembly.fasta<br />
+--outdir ~/flot_project/eval/annotation/flye_prokka<br />
+--prefix flye</p>
+<h1 id="raven">Raven</h1>
+<p>prokka ~/flot_project/assemblies/raven/assembly.fasta<br />
+--outdir ~/flot_project/eval/annotation/raven_prokka<br />
+--prefix raven</p>
+<h1 id="shasta">Shasta</h1>
+<p>prokka ~/flot_project/assemblies/shasta/assembly.fasta<br />
+--outdir ~/flot_project/eval/annotation/shasta_prokka<br />
+--prefix shasta</p>
+<h3 id="3-key-output-the-faa-files">3. Key Output: The .faa Files</h3>
+<p>From Prokka, the most important output for this step was the .faa
+file:</p>
+<ul>
+<li>This file contains all predicted protein sequences in FASTA
+format.</li>
+<li>Proteins are the functional workhorses of the cell, and their
+sequences allow us to link genome data to metabolic pathways.</li>
+<li>KEGG's BlastKOALA uses these sequences to assign KEGG Orthology (KO)
+numbers and map them to metabolic pathways.</li>
+</ul>
+<h3 id="4-preparing-files-for-blastkoala">4. Preparing Files for
+BlastKOALA</h3>
+<p>We copied the .faa files from our Linux environment to our local
+machine to upload them to BlastKOALA: cp
+~/flot_project/eval/annotation/flye_prokka/flye.faa
+/mnt/c/Users/Louis/Downloads/ cp
+~/flot_project/eval/annotation/raven_prokka/raven.faa
+/mnt/c/Users/Louis/Downloads/ cp
+~/flot_project/eval/annotation/shasta_prokka/shasta.faa
+/mnt/c/Users/Louis/Downloads/ The /mnt/c/... path bridges the WSL/Linux
+environment to the Windows filesystem, placing the files into our
+Downloads folder for easy web upload.</p>
+<h3 id="5-running-blastkoala">5. Running BlastKOALA</h3>
+<p>We uploaded each .faa file to KEGG's BlastKOALA (<a
+href="http://www.kegg.jp/blastkoala/">http://www.kegg.jp/blastkoala/</a>)
+using the 'Prokaryotes' database (refprok.pep). BlastKOALA matches
+protein sequences to KO terms and groups them into functional categories
+such as metabolism, genetic information processing, and environmental
+processing.</p>
+<h3 id="6-results-and-observations">6. Results and Observations</h3>
+<h4 id="flye-acinetobacter-baumannii">Flye (Acinetobacter
+baumannii)</h4>
+<ul>
+<li>Proteins predicted: 3,425 | Annotated: 1,966 (57.4%)</li>
+<li>Major categories: Protein families (signaling, cellular), genetic
+information processing, carbohydrate and amino acid metabolism,
+environmental information processing.</li>
+<li>Interpretation: Rich functional diversity consistent with A.
+baumannii's adaptability and persistence in diverse environments.</li>
+</ul>
+<h4 id="raven-klebsiella-pneumoniae">Raven (Klebsiella pneumoniae)</h4>
+<ul>
+<li>Proteins predicted: 6,137 | Annotated: 3,552 (57.9%)</li>
+<li>Functional distribution similar in shape to Flye's, but reflecting
+K. pneumoniae-specific traits, especially carbohydrate metabolism and
+membrane transport.</li>
+<li>Interpretation: The divergence from Flye/Shasta matches earlier
+phylogeny results and suggests either contamination or
+assembler-specific bias.</li>
+</ul>
+<h4 id="shasta-acinetobacter-baumannii">Shasta (Acinetobacter
+baumannii)</h4>
+<ul>
+<li>Proteins predicted: 2,984 | Annotated: 1,617 (54.2%)</li>
+<li>Functional profile strongly resembles Flye's, despite Shasta's much
+lower genome completeness.</li>
+<li>Interpretation: Even fragmented assemblies can capture essential
+conserved loci and core metabolic pathways if coverage over these
+regions is adequate.</li>
+</ul>
+<h3 id="7-integrated-project-interpretation">7. Integrated Project
+Interpretation</h3>
+<p>This BlastKOALA metabolic analysis forms the final, complementary
+layer of our project, linking structural genome data to biologicaion.
+From assembly to metabolic annotation, our pipeline demonstrated:</p>
+<ul>
+<li>Flye consistently provided the most complete and contiguous genome,
+yielding the richest functional annotation for A. baumannii.</li>
+<li>Shasta, although fragmented and incomplete, still converged with
+Flye at both the 16S phylogenetic and metabolic profile levels, proving
+the resilience of conserved gene regions.</li>
+<li>Raven, despite excellent completeness scores from KAT and BUSCO,
+diverged in both phylogeny and metabolic signature, underlining that
+completeness alone does not ensure biological accuracy.</li>
+</ul>
+<p>By integrating assembly metrics (QUAST, KAT, BUSCO), assembly
+structure (Bandage), taxonomic inference (BLASTN + phylogeny), and
+functional capacity (Prokka + BlastKOALA), we achieved a holistic view
+of each assembler's performance — technically and biologically. This
+final step confirms that genome assembly evaluation should always extend
+beyond structural metrics to include functional and metabolic
+perspectives for robust, real-world conclusions.</p>

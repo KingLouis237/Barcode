@@ -1,0 +1,19 @@
+#                                                                               --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name           accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#   ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+Utg1918:179148-180137|- -            330 662686at2            -            227   8.3e-79  262.7   3.4   1   3   6.8e-32   2.1e-28   97.9   0.1     1    74    24    99    24   108 0.91 Utg1918_190 # 179148 # 180137 # -1 # ID=4_190;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.529
+Utg1918:179148-180137|- -            330 662686at2            -            227   8.3e-79  262.7   3.4   2   3   5.9e-32   1.8e-28   98.1   0.2    66   174   109   239    97   243 0.82 Utg1918_190 # 179148 # 180137 # -1 # ID=4_190;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.529
+Utg1918:179148-180137|- -            330 662686at2            -            227   8.3e-79  262.7   3.4   3   3   6.4e-22     2e-18   65.2   0.0   169   226   254   316   250   317 0.90 Utg1918_190 # 179148 # 180137 # -1 # ID=4_190;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.529
+Utg1904:464380-465387|- -            336 662686at2            -            227   3.1e-74  247.8   1.7   1   3   6.1e-28   1.9e-24   84.9   0.1     1    68    24    93    24   103 0.93 Utg1904_411 # 464380 # 465387 # -1 # ID=1_411;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.429
+Utg1904:464380-465387|- -            336 662686at2            -            227   3.1e-74  247.8   1.7   2   3   2.9e-30   8.9e-27   92.5   0.0    67   170   110   233   100   236 0.83 Utg1904_411 # 464380 # 465387 # -1 # ID=1_411;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.429
+Utg1904:464380-465387|- -            336 662686at2            -            227   3.1e-74  247.8   1.7   3   3   1.2e-22   3.6e-19   67.7   0.1   169   226   252   314   247   315 0.89 Utg1904_411 # 464380 # 465387 # -1 # ID=1_411;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.429
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/662686at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_raven/run_bacteria_odb10/hmmer_output/662686at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/662686at2.hmm /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:01:36 2025
+# [ok]

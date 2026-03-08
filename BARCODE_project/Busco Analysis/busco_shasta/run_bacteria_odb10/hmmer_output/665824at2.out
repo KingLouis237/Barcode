@@ -1,0 +1,21 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+2:84160-85875|-      -            572 665824at2            -            547  5.5e-242  801.8   0.0   1   1    1e-244  6.1e-242  801.7   0.0     1   533     1   561     1   571 0.96 2_81 # 84160 # 85875 # -1 # ID=2_81;partial=00;start_type=ATG;rbs_motif=AGGA;rbs_spacer=5-10bp;gc_cont=0.421
+14:443799-445070|-   -            424 665824at2            -            547   3.4e-12   43.4   0.0   1   2   5.1e-13     3e-10   36.9   0.0    57   208   181   333   170   341 0.90 14_394 # 443799 # 445070 # -1 # ID=8_394;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.420
+14:443799-445070|-   -            424 665824at2            -            547   3.4e-12   43.4   0.0   2   2     0.005         3    3.9   0.0   391   450   353   414   344   420 0.81 14_394 # 443799 # 445070 # -1 # ID=8_394;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.420
+6:78231-78695|-      -            155 665824at2            -            547   3.1e-10   36.9   0.1   1   1     6e-13   3.6e-10   36.7   0.1   256   366    32   145    10   152 0.89 6_78 # 78231 # 78695 # -1 # ID=4_78;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.363
+0:89148-90440|-      -            431 665824at2            -            547   7.2e-08   29.1   0.1   1   2   8.4e-06    0.0051   13.1   0.0    37   109     8    84     4    93 0.88 0_83 # 89148 # 90440 # -1 # ID=1_83;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.422
+0:89148-90440|-      -            431 665824at2            -            547   7.2e-08   29.1   0.1   2   2   5.2e-06    0.0031   13.8   0.1   462   537   344   419   333   429 0.83 0_83 # 89148 # 90440 # -1 # ID=1_83;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.422
+14:318256-319230|-   -            325 665824at2            -            547     0.014   11.6   0.0   1   2      0.32   1.9e+02   -2.0   0.0    47    77    14    44    12    48 0.85 14_286 # 318256 # 319230 # -1 # ID=8_286;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+14:318256-319230|-   -            325 665824at2            -            547     0.014   11.6   0.0   2   2   8.1e-05     0.048    9.9   0.0   132   175    88   129    87   142 0.85 14_286 # 318256 # 319230 # -1 # ID=8_286;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/665824at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_shasta/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_shasta/run_bacteria_odb10/hmmer_output/665824at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/665824at2.hmm /home/abane_ashu/busco-5.8.0/busco_shasta/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:02:42 2025
+# [ok]

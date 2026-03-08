@@ -1,0 +1,12 @@
+name: barcode-quast
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - quast=5.2.0
+  - matplotlib=3.8
+  - pandas=2.2
+  - numpy=1.26
+  - pip

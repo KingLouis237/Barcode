@@ -1,0 +1,19 @@
+name: barcode-busco
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - busco=5.8.0
+  - hmmer=3.4
+  - prodigal=2.6.3
+  - augustus=3.5.0
+  - blast=2.14.1
+  - bbmap=39.06
+  - pandas=2.2
+  - numpy=1.26
+  - matplotlib=3.8
+  - biopython=1.83
+  - requests=2.31
+  - pip

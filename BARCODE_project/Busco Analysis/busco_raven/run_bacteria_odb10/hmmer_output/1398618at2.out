@@ -1,0 +1,17 @@
+#                                                                               --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name           accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#   ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+Utg1904:469908-470441|- -            178 1398618at2           -            130   2.4e-43  145.6   2.2   1   2     5e-10   1.6e-06   26.5   0.2     1    33     1    35     1    48 0.89 Utg1904_421 # 469908 # 470441 # -1 # ID=1_421;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.440
+Utg1904:469908-470441|- -            178 1398618at2           -            130   2.4e-43  145.6   2.2   2   2   1.1e-38   3.3e-35  119.2   0.2    24   130    55   176    41   176 0.89 Utg1904_421 # 469908 # 470441 # -1 # ID=1_421;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.440
+Utg1918:184717-185250|- -            178 1398618at2           -            130   2.1e-42  142.5   3.7   1   2   9.6e-10     3e-06   25.6   0.3     1    34     1    36     1    61 0.89 Utg1918_200 # 184717 # 185250 # -1 # ID=4_200;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.517
+Utg1918:184717-185250|- -            178 1398618at2           -            130   2.1e-42  142.5   3.7   2   2   1.8e-38   5.5e-35  118.6   0.2    31   130    62   176    38   176 0.86 Utg1918_200 # 184717 # 185250 # -1 # ID=4_200;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.517
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1398618at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_raven/run_bacteria_odb10/hmmer_output/1398618at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1398618at2.hmm /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:01:29 2025
+# [ok]

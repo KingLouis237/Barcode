@@ -1,0 +1,16 @@
+#                                                                            --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name        accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+16:130492-130983|+   -            164 1846503at2           -            110   2.1e-37  124.8   0.2   1   1   1.7e-38   2.6e-35  118.1   0.2     2   108     5   138     4   140 0.86 16_147 # 130492 # 130983 # 1 # ID=9_147;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.378
+14:253989-254621|-   -            211 1846503at2           -            110     0.014   12.8   0.1   1   2   7.8e-05      0.12    9.8   0.0     4    35    22    53    19    60 0.86 14_226 # 253989 # 254621 # -1 # ID=8_226;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.352
+14:253989-254621|-   -            211 1846503at2           -            110     0.014   12.8   0.1   2   2      0.04        60    1.1   0.0    78   101    54    77    51    81 0.89 14_226 # 253989 # 254621 # -1 # ID=8_226;partial=00;start_type=ATG;rbs_motif=None;rbs_spacer=None;gc_cont=0.352
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1846503at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_shasta/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_shasta/run_bacteria_odb10/hmmer_output/1846503at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1846503at2.hmm /home/abane_ashu/busco-5.8.0/busco_shasta/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:02:40 2025
+# [ok]

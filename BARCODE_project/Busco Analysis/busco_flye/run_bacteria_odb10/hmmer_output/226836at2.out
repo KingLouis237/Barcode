@@ -1,0 +1,18 @@
+#                                                                                  --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name              accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#      ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+contig_1:1282873-1284651|- -            593 226836at2            -            473  4.4e-182  603.1   0.0   1   1  6.1e-184    7e-181  599.1   0.0     1   473     3   580     3   580 0.83 contig_1_1170 # 1282873 # 1284651 # -1 # ID=1_1170;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=11-12bp;gc_cont=0.423
+contig_1:3445097-3446626|- -            510 226836at2            -            473   8.9e-28   94.3   0.6   1   2   1.2e-15   1.3e-12   44.3   0.2    97   222   165   302    62   316 0.67 contig_1_3129 # 3445097 # 3446626 # -1 # ID=1_3129;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.400
+contig_1:3445097-3446626|- -            510 226836at2            -            473   8.9e-28   94.3   0.6   2   2   7.5e-17   8.6e-14   48.2   0.0   363   452   412   505   351   508 0.75 contig_1_3129 # 3445097 # 3446626 # -1 # ID=1_3129;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.400
+contig_1:1588862-1589836|+ -            325 226836at2            -            473   7.7e-12   41.7   0.1   1   2   2.5e-07   0.00029   16.8   0.1   121   205    24   113    11   175 0.69 contig_1_1432 # 1588862 # 1589836 # 1 # ID=1_1432;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+contig_1:1588862-1589836|+ -            325 226836at2            -            473   7.7e-12   41.7   0.1   2   2   2.6e-09     3e-06   23.3   0.0   363   450   231   321   198   324 0.81 contig_1_1432 # 1588862 # 1589836 # 1 # ID=1_1432;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.427
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/226836at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_flye/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_flye/run_bacteria_odb10/hmmer_output/226836at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/226836at2.hmm /home/abane_ashu/busco-5.8.0/busco_flye/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 00:53:30 2025
+# [ok]

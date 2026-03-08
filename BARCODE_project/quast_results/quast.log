@@ -1,0 +1,59 @@
+/home/abane_ashu/quast-5.2.0/quast.py -o /home/abane_ashu/flot_project/eval/quast -t 8 --labels Flye,Raven,Shasta /home/abane_ashu/flot_project/assemblies/flye/assembly.fasta /home/abane_ashu/flot_project/assemblies/raven/raven.fasta /home/abane_ashu/flot_project/assemblies/shasta/Assembly.fasta
+
+Version: 5.2.0, 3d87c606
+
+System information:
+  OS: Linux-4.4.0-19041-Microsoft-x86_64-with-glibc2.39 (linux_64)
+  Python version: 3.11.13
+  CPUs number: 8
+
+Started: 2025-08-13 19:59:32
+
+Logging to /home/abane_ashu/flot_project/eval/quast/quast.log
+
+CWD: /home/abane_ashu/quast-5.2.0
+Main parameters: 
+  MODE: default, threads: 8, min contig length: 500, min alignment length: 65, min alignment IDY: 95.0, \
+  ambiguity: one, min local misassembly length: 200, min extensive misassembly length: 1000
+
+WARNING: Can't draw plots: python-matplotlib is missing or corrupted.
+
+Contigs:
+  Pre-processing...
+  1  /home/abane_ashu/flot_project/assemblies/flye/assembly.fasta ==> Flye
+  2  /home/abane_ashu/flot_project/assemblies/raven/raven.fasta ==> Raven
+  3  /home/abane_ashu/flot_project/assemblies/shasta/Assembly.fasta ==> Shasta
+
+2025-08-13 19:59:36
+Running Basic statistics processor...
+  Contig files: 
+    1  Flye
+    2  Raven
+    3  Shasta
+  Calculating N50 and L50...
+    1  Flye, N50 = 3773355, L50 = 1, auN = 3766039.5, Total length = 3780699, GC % = 39.08, # N's per 100 kbp =  0.00
+    2  Raven, N50 = 3773352, L50 = 1, auN = 2274652.2, Total length = 6402553, GC % = 46.73, # N's per 100 kbp =  0.00
+    3  Shasta, N50 = 437312, L50 = 4, auN = 368907.6, Total length = 3155007, GC % = 39.09, # N's per 100 kbp =  0.00
+Done.
+
+NOTICE: Genes are not predicted by default. Use --gene-finding or --glimmer option to enable it.
+
+2025-08-13 19:59:39
+Creating large visual summaries...
+This may take a while: press Ctrl-C to skip this step..
+  1 of 1: Creating Icarus viewers...
+Done
+
+2025-08-13 19:59:40
+RESULTS:
+  Text versions of total report are saved to /home/abane_ashu/flot_project/eval/quast/report.txt, report.tsv, and report.tex
+  Text versions of transposed total report are saved to /home/abane_ashu/flot_project/eval/quast/transposed_report.txt, transposed_report.tsv, and transposed_report.tex
+  HTML version (interactive tables and plots) is saved to /home/abane_ashu/flot_project/eval/quast/report.html
+  Icarus (contig browser) is saved to /home/abane_ashu/flot_project/eval/quast/icarus.html
+  Log is saved to /home/abane_ashu/flot_project/eval/quast/quast.log
+
+Finished: 2025-08-13 19:59:41
+Elapsed time: 0:00:08.847696
+NOTICEs: 1; WARNINGs: 2; non-fatal ERRORs: 0
+
+Thank you for using QUAST!

@@ -1,0 +1,22 @@
+#                                                                                 --- full sequence --- -------------- this domain -------------   hmm coord   ali coord   env coord
+# target name             accession   tlen query name           accession   qlen   E-value  score  bias   #  of  c-Evalue  i-Evalue  score  bias  from    to  from    to  from    to  acc description of target
+#     ------------------- ---------- ----- -------------------- ---------- ----- --------- ------ ----- --- --- --------- --------- ------ ----- ----- ----- ----- ----- ----- ----- ---- ---------------------
+Utg1904:3250936-3251880|- -            315 1069591at2           -            187   4.8e-42  142.2   4.7   1   3     1e-35   1.6e-32  111.2   0.0     2    99     8   118     7   142 0.85 Utg1904_2977 # 3250936 # 3251880 # -1 # ID=1_2977;partial=00;start_type=ATG;rbs_motif=AGGAG/GGAGG;rbs_spacer=11-12bp;gc_cont=0.383
+Utg1904:3250936-3251880|- -            315 1069591at2           -            187   4.8e-42  142.2   4.7   2   3   0.00041      0.64    8.1   0.0   110   130   152   172   124   188 0.69 Utg1904_2977 # 3250936 # 3251880 # -1 # ID=1_2977;partial=00;start_type=ATG;rbs_motif=AGGAG/GGAGG;rbs_spacer=11-12bp;gc_cont=0.383
+Utg1904:3250936-3251880|- -            315 1069591at2           -            187   4.8e-42  142.2   4.7   3   3   6.2e-05     0.095   10.8   3.0   170   186   272   288   200   289 0.75 Utg1904_2977 # 3250936 # 3251880 # -1 # ID=1_2977;partial=00;start_type=ATG;rbs_motif=AGGAG/GGAGG;rbs_spacer=11-12bp;gc_cont=0.383
+Utg1904:1422828-1424141|+ -            438 1069591at2           -            187     0.028   12.5   0.1   1   2   8.5e-05      0.13   10.3   0.0     2    21   114   133   113   137 0.92 Utg1904_1293 # 1422828 # 1424141 # 1 # ID=1_1293;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.406
+Utg1904:1422828-1424141|+ -            438 1069591at2           -            187     0.028   12.5   0.1   2   2         1   1.6e+03   -3.0   0.0    13    35   389   411   388   428 0.77 Utg1904_1293 # 1422828 # 1424141 # 1 # ID=1_1293;partial=00;start_type=ATG;rbs_motif=GGAG/GAGG;rbs_spacer=5-10bp;gc_cont=0.406
+Utg1904:2298835-2301513|+ -            893 1069591at2           -            187      0.28    9.3   3.1   1   2      0.35   5.4e+02   -1.5   1.4    91   142   468   519   464   526 0.87 Utg1904_2066 # 2298835 # 2301513 # 1 # ID=1_2066;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.374
+Utg1904:2298835-2301513|+ -            893 1069591at2           -            187      0.28    9.3   3.1   2   2   0.00022      0.34    9.0   0.0     2    22   609   629   608   631 0.90 Utg1904_2066 # 2298835 # 2301513 # 1 # ID=1_2066;partial=00;start_type=ATG;rbs_motif=GGA/GAG/AGG;rbs_spacer=5-10bp;gc_cont=0.374
+Utg1904:1989585-1992014|- -            810 1069591at2           -            187      0.53    8.3   5.2   1   2    0.0018       2.7    6.0   1.1    95   159   201   267   195   283 0.83 Utg1904_1802 # 1989585 # 1992014 # -1 # ID=1_1802;partial=00;start_type=ATG;rbs_motif=AGGAG;rbs_spacer=5-10bp;gc_cont=0.401
+Utg1904:1989585-1992014|- -            810 1069591at2           -            187      0.53    8.3   5.2   2   2      0.01        16    3.5   0.2     2    22   365   385   364   387 0.88 Utg1904_1802 # 1989585 # 1992014 # -1 # ID=1_1802;partial=00;start_type=ATG;rbs_motif=AGGAG;rbs_spacer=5-10bp;gc_cont=0.401
+#
+# Program:         hmmsearch
+# Version:         3.4 (Aug 2023)
+# Pipeline mode:   SEARCH
+# Query file:      /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1069591at2.hmm
+# Target file:     /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa
+# Option settings: hmmsearch --domtblout /home/abane_ashu/busco-5.8.0/busco_raven/run_bacteria_odb10/hmmer_output/1069591at2.out --cpu 1 /home/abane_ashu/busco-5.8.0/busco_downloads/lineages/bacteria_odb10/hmms/1069591at2.hmm /home/abane_ashu/busco-5.8.0/busco_raven/prodigal_output/predicted_genes/predicted.faa 
+# Current dir:     /home/abane_ashu/busco-5.8.0
+# Date:            Thu Aug 14 01:01:28 2025
+# [ok]
