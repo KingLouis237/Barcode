@@ -8,13 +8,18 @@ _Last updated: 7 March 2026_
 - **Why bacterial genome assembly?** Bacterial genomes are typically 3–6 Mb and often circular. Long-read assembly can resolve repeats and plasmids, but tooling/parameters strongly influence contiguity and accuracy, so documenting the process is essential for trust.
 - **Why multiple assemblers + evaluation tools?** Different assemblers make different trade-offs (speed vs accuracy, repeat handling, read filtering). Running Flye, Raven, and Shasta side-by-side, then validating with QUAST, KAT, BUSCO, Bandage, and 16S analyses exposes strengths, weaknesses, and gives readers intuition about comparing pipelines.
 
+> **Canonical vs archival sources**
+> - This Markdown playbook is the **only maintained source of truth** for the BARCODE workflow. All new edits happen here.
+> - `BARCODE_project/WORKFLOW.html` is retained solely as a historical/raw log. It preserves original commands verbatim but now carries a banner deferring to this document.
+> - `BARCODE_project/barcode_carousel.pdf` houses supporting figures (screenshots, graphs). Each step below points to the relevant slide as “Visual reference” where it meaningfully reinforces the text.
+
 ## How to Use This Playbook
 1. **Core Flow First** – Each step begins with a concise summary (goal, inputs, canonical command, expected files).
 2. **Layered Deep Dives** – Callouts titled *Command Breakdown*, *Sanity Check*, *Troubleshooting*, or *Intuition Builder* expand on flags, reasoning, and diagnostics.
 3. **Reproducibility Labels** – Every step carries a badge so you know what can be rerun as-is.
-   - ?? **Fully Reproducible (FR)**: All inputs, commands, and outputs are in `BARCODE_project` or generated deterministically.
-   - ?? **Conditionally Reproducible (CR)**: Requires large downloads, internet access, or cloud quotas but still scripted.
-   - ?? **Manual / External (ME)**: Relies on GUI/web tools; we provide artifacts plus instructions to redo manually.
+   - 🟢 **Fully Reproducible (FR)**: All inputs, commands, and outputs are in `BARCODE_project` or generated deterministically.
+   - 🟡 **Conditionally Reproducible (CR)**: Requires large downloads, internet access, or cloud quotas but still scripted.
+   - 🟠 **Manual / External (ME)**: Relies on GUI/web tools; we provide artifacts plus instructions to redo manually.
 4. **Scientific Sanity Checks** – Instead of quizzes, checkpoints show what success/failure looks like so you can reason about deviations.
 
 ## Repository Layout & Data Availability
@@ -24,6 +29,7 @@ _Last updated: 7 March 2026_
 - 16S deliverables are stored in `16S anno_phylo/`. When the playbook references `eval/16s/*`, read it as “regenerate under `eval/16s`, or consult the saved files in `16S anno_phylo/`.”
 - Bandage PNGs (`Bandage Graphs/*.png`), BUSCO/QUAST/KAT outputs, BlastKOALA screenshots, and presentation/video assets are committed exactly as referenced.
 - Paths highlighted as missing during validation are documented in the **Local Validation – 7 Mar 2026** section at the end of this file.
+- `BARCODE_project/WORKFLOW.html` remains available if you need to see the original unedited command transcript; treat it as archival/raw data only.
 
 ## Workflow Overview
 | Stage | Reproducibility | Key Outputs |
@@ -73,7 +79,7 @@ done
 
 ---
 
-## Step 1. Raw Read Quality Control (SeqKit) ??
+## Step 1. Raw Read Quality Control (SeqKit) 🟢
 **Goal**: Verify barcode07 read yield, length distribution, and per-base quality before assembly.
 
 **Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ). _This file is not bundled; place your own demultiplexed barcode07 FASTQ under `BARCODE_project/raw/` before running._
@@ -110,12 +116,20 @@ GC(%)    = 41.29
 > - If Q20 drops below 75%, expect more polishing rounds or pre-assembly filtering.
 > - Unexpected GC peaks may indicate barcode bleed-through; re-check demultiplexing settings.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “Raw QC & Coverage” slide summarizes the SeqKit table and read-length violin plots that correspond to this step.
+
 ---
 
-## Step 2. Assemblies ??
+## Step 2. Assemblies 🟢
 We run three assemblers to illustrate different design philosophies. All raw outputs live in `Assembly/` (flattened copies) or original subfolders referenced in `WORKFLOW.html`.
 
-### 2A. Flye ??
+> **Result digest (from `Assembly/*.fasta` and `WORKFLOW.html`)**
+> - **Flye:** 2 contigs, total length 3,780,699 bp, N50 3,773,355 bp, dominant circular chromosome plus one small contig.
+> - **Raven:** 28 contigs spanning 6,402,553 bp, same N50 as Flye but inflated span/GC (46.73%) because duplicated regions stay split.
+> - **Shasta:** 13 contigs, 3,155,007 bp total, N50 437,312 bp due to aggressive read filtering and lower coverage.
+
+### 2A. Flye 🟢
 **Goal**: Produce a highly contiguous assembly optimized for long reads.
 
 **Inputs**: `raw/barcode07.fq`, environment `barcode-assembly`.
@@ -139,7 +153,7 @@ flye --nano-hq raw/barcode07.fq --out-dir assemblies/flye --threads $(nproc)
 > - If Flye crashes due to RAM, reduce `--threads` to limit memory.
 > - If you see more than two contigs, inspect coverage spikes for possible contamination.
 
-### 2B. Raven ??
+### 2B. Raven 🟢
 **Core Command**
 ```bash
 raven --threads $(nproc) \
@@ -154,7 +168,7 @@ raven --threads $(nproc) \
 > **Sanity Check**
 > - `seqkit stats assemblies/raven/raven.fasta | grep sum_len` ˜ 6.4 Mb. If far larger, trimming failed.
 
-### 2C. Shasta ??
+### 2C. Shasta 🟢
 **Core Command**
 ```bash
 shasta --input raw/barcode07.fq \
@@ -166,9 +180,12 @@ shasta --input raw/barcode07.fq \
 > **Common Pitfall**
 > - Shasta discards reads <10 kb; confirm with `ReadSummary.csv` that 9,968 reads remained. Low coverage explains missing BUSCOs later.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “Assembly comparison” slide juxtaposes Flye/Raven/Shasta contig layouts and karyotype-style bars that match the statistics above.
+
 ---
 
-## Step 3. QUAST Assembly Benchmarking ??
+## Step 3. QUAST Assembly Benchmarking 🟢
 **Goal**: Compare contiguity metrics (contig counts, N50, GC) across assemblers using a consistent evaluator.
 
 **Inputs**: `assemblies/flye/assembly.fasta`, `assemblies/raven/raven.fasta`, `assemblies/shasta/Assembly.fasta`.
@@ -202,9 +219,12 @@ quast.py \
 > **Troubleshooting**
 > - If QUAST fails due to missing matplotlib backend, ensure you ran it inside `barcode-quast` env.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “QUAST metrics” slide reproduces the bar charts for contig counts, N50, and GC% taken from `quast_results/report.txt`.
+
 ---
 
-## Step 4. K-mer Agreement with KAT ??
+## Step 4. K-mer Agreement with KAT 🟢
 **Goal**: Measure how well each assembly captures the raw read k-mer spectrum.
 
 **Inputs**: raw FASTQ plus assembly FASTA.
@@ -234,9 +254,12 @@ kat comp -o "KAT analysis/kat_flye" \
 > **Troubleshooting**
 > - KAT can require >32 GB RAM. Use `--threads 4` and subsample reads if memory constrained.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “KAT spectra” slide shows the exact `*.spectra-cn.png` plots for Flye/Raven/Shasta so readers can match the text with color-coded histograms.
+
 ---
 
-## Step 5. BUSCO Genome Completeness ??
+## Step 5. BUSCO Genome Completeness 🟢
 **Goal**: Quantify single-copy ortholog recovery using `bacteria_odb10` lineage.
 
 **Inputs**: same three assemblies.
@@ -264,9 +287,12 @@ busco \
 > **Troubleshooting**
 > - On first run, BUSCO downloads `bacteria_odb10`; keep `~/.config/busco` cached to avoid repeated downloads.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “BUSCO completeness” slide mirrors the table in `Busco Analysis/busco_*/short_summary*.txt`, with bars for Complete/Fragmented/Missing metrics.
+
 ---
 
-## Step 6. Bandage Graph Visualization ??
+## Step 6. Bandage Graph Visualization 🟡
 **Goal**: Visually inspect assembly graphs for circularization, repeat tangles, or plasmids.
 
 **Inputs**: `.gfa` files from each assembler.
@@ -284,9 +310,12 @@ busco \
 > - Flye graph shows a single circular contig plus a small bubble.
 > - Raven graph contains multiple branches, mirroring duplicated BUSCO findings.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “Bandage graphs” slide embeds the PNGs from `Bandage Graphs/*.png`, letting readers compare Flye/Raven/Shasta graph structures visually.
+
 ---
 
-## Step 7. 16S Extraction + Phylogeny ??
+## Step 7. 16S Extraction + Phylogeny 🟢
 **Goal**: Confirm taxonomic identity and contextualize assemblies phylogenetically.
 
 **Inputs**: Assemblies, tools from `barcode-phylo` env. The repository stores generated FASTA/trees under `16S anno_phylo/` if you prefer to inspect existing results rather than rerun the commands below.
@@ -328,9 +357,12 @@ busco \
 > **Troubleshooting**
 > - If `barrnap` produces no 16S hits, verify assembly coverage; missing rRNA operons often mean under-assembly or mis-annotation.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “16S phylogeny” slide shows the IQ-TREE consensus plus BLAST hit thumbnails corresponding to `16S anno_phylo/16S_tree.nwk` and the BLAST tables captured in `WORKFLOW.html`.
+
 ---
 
-## Step 8. BlastKOALA Functional Annotation ??
+## Step 8. BlastKOALA Functional Annotation 🟠
 **Goal**: Annotate metabolic pathways via KEGG’s BlastKOALA service.
 
 **Status**: Requires manual uploads to KEGG servers; outputs preserved as `BlastKoala/Screenshot (260-262).png`.
@@ -341,19 +373,25 @@ busco \
 3. Capture screenshots or export tables.
 
 > **Reproducibility Note**
-> - Because KEGG imposes account limits and lacks a fully open API, we classify this as ??. Screenshots serve as audit artifacts; redo manually if needed.
+> - Because KEGG imposes account limits and lacks a fully open API, we classify this as 🟠. Screenshots serve as audit artifacts; redo manually if needed.
 
 > **Sanity Check**
 > - Modules enriched for antibiotic resistance should match known *Acinetobacter* biology. Discrepancies may indicate contamination or annotation errors.
 
+> **Visual reference**
+> - `barcode_carousel.pdf` – “BlastKOALA pathways” slide contains cropped screenshots from `BlastKoala/Screenshot (260-262).png`, matching the modules discussed here.
+
 ---
 
-## Step 9. Presentation & Video Packaging ??
+## Step 9. Presentation & Video Packaging 🟠
 **Goal**: Communicate findings via `Presentation_flot.pptx` and `Video_present_flot.mp4`.
 
 **Status**: Manual editing/recording; files live at the project root.
 
-> **Note**: These artifacts summarize the workflow but are not scriptable, so they remain ??.
+> **Note**: These artifacts summarize the workflow but are not scriptable, so they remain 🟠.
+
+> **Visual reference**
+> - `barcode_carousel.pdf` – closing slide previews the talk/video thumbnails to illustrate how findings were communicated.
 
 ---
 
