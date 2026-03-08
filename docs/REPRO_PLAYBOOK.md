@@ -384,3 +384,6 @@ busco \
 
 **Docker Build Attempt**
 - `docker --version` is unavailable on this host, so a container build was not executed. Run the documented `docker build` / `docker run` commands on a machine with Docker Engine installed to validate the image.
+
+**Assembler Version Smoke Tests (external run, 8 Mar 2026)**
+- On a Linux workstation, `conda env create -f envs/assembly.yml` succeeded. Activating `barcode-assembly` and running `flye --version`, `raven --version`, `shasta --version`, `seqkit version`, and `minimap2 --version` returned `2.9.6-b1802`, `1.8.3`, `Release 0.14.0`, `v2.10.0`, and `2.28-r1209` respectively, confirming the environment works as documented.
