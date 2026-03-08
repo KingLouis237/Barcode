@@ -28,23 +28,23 @@ _Last updated: 7 March 2026_
 ## Workflow Overview
 | Stage | Reproducibility | Key Outputs |
 | --- | --- | --- |
-| Environment Preparation | ?? | `envs/*.yml`, Docker image | 
-| Raw Read QC | ?? | `raw/seqkit_stats.txt` (documented in workflow) |
-| Assemblies (Flye, Raven, Shasta) | ?? | `Assembly/*.fasta`, `assemblies/*` | 
-| QUAST Evaluation | ?? | `quast_results/*` |
-| KAT k-mer Comparisons | ?? | `KAT analysis/*` |
-| BUSCO Completeness | ?? | `Busco Analysis/*` |
-| Bandage Graphs | ?? | `Bandage Graphs/*.png` |
-| 16S Extraction + Phylogeny | ?? | `16S anno_phylo/*` |
-| BlastKOALA Functional Annotation | ?? | `BlastKoala/Screenshot*.png` |
-| Presentation + Video Packaging | ?? | `Presentation_flot.pptx`, `Video_present_flot.mp4` |
+| Environment Preparation | 🟢 | `envs/*.yml` | 
+| Raw Read QC | 🟢 | `raw/seqkit_stats.txt` (documented in workflow) |
+| Assemblies (Flye, Raven, Shasta) | 🟢 | `Assembly/*.fasta`, `assemblies/*` | 
+| QUAST Evaluation | 🟢 | `quast_results/*` |
+| KAT k-mer Comparisons | 🟢 | `KAT analysis/*` |
+| BUSCO Completeness | 🟢 | `Busco Analysis/*` |
+| Bandage Graphs | 🟡 | `Bandage Graphs/*.png` |
+| 16S Extraction + Phylogeny | 🟢 | `16S anno_phylo/*` |
+| BlastKOALA Functional Annotation | 🟠 | `BlastKoala/Screenshot*.png` |
+| Presentation + Video Packaging | 🟠 | `Presentation_flot.pptx`, `Video_present_flot.mp4` |
 
 ---
 
-## Step 0. Environment Preparation ??
-**Goal**: Install the exact toolchains needed for assembly, evaluation, and phylogenetics, either via Conda (per-tool envs) or the Docker image.
+## Step 0. Environment Preparation 🟢
+**Goal**: Install the exact toolchains needed for assembly, evaluation, and phylogenetics using modular Conda environments (containers deferred until a future phase).
 
-**Inputs**: `envs/assembly.yml`, `envs/quast.yml`, `envs/kat.yml`, `envs/busco.yml`, `envs/phylo.yml`, and the root-level `Dockerfile`.
+**Inputs**: `envs/assembly.yml`, `envs/quast.yml`, `envs/kat.yml`, `envs/busco.yml`, and `envs/phylo.yml`.
 
 **Core Commands**
 ```bash
@@ -58,20 +58,12 @@ for yaml in envs/quast.yml envs/kat.yml envs/busco.yml envs/phylo.yml; do
   conda env create -f "${yaml}"
 done
 ```
-```bash
-# Build the best-effort container
-DOCKER_BUILDKIT=1 docker build -t barcode-playbook .
-# Drop into a shell (mount project data read-only by default)
-docker run -it --rm -v ${PWD}:/workspace:ro barcode-playbook
-```
 
 > **Command Breakdown**
 > - `conda env create -f envs/assembly.yml`: installs python 3.9 with flye=2.9.6-b1802, raven-assembler=1.8.3, shasta=0.14.0, seqkit=2.10.0, and minimap2=2.28 inside `barcode-assembly`. (Samtools is omitted here to avoid the current zlib conflict; use another env if you need it.)
-> - `Dockerfile`: pre-creates all environments using micromamba so you can `micromamba run -n barcode-assembly flye --help` without touching the host.
 
 > **Sanity Check**
 > - Run `conda env list` and verify all five envs exist.
-> - Inside Docker, `micromamba run -n barcode-quast quast.py --help` should print QUAST 5.2.0 usage.
 
 > **Troubleshooting**
 > - BUSCO pulls heavy dependencies (Augustus, HMMER). If installation fails, create that env separately: `conda env create -f envs/busco.yml --name tmp && conda rename tmp barcode-busco`.
@@ -381,9 +373,6 @@ busco \
 
 **Environment Creation Attempts**
 - `conda --version` and `micromamba --version` are unavailable in the current validation environment, so the Conda envs listed in `envs/*.yml` could not be materialized here. Ensure Conda/Miniforge or Micromamba is installed locally before running `conda env create -f ...`.
-
-**Docker Build Attempt**
-- `docker --version` is unavailable on this host, so a container build was not executed. Run the documented `docker build` / `docker run` commands on a machine with Docker Engine installed to validate the image.
 
 **Assembler Version Smoke Tests (external run, 8 Mar 2026)**
 - On a Linux workstation, `conda env create -f envs/assembly.yml` succeeded. Activating `barcode-assembly` and running `flye --version`, `raven --version`, `shasta --version`, `seqkit version`, and `minimap2 --version` returned `2.9.6-b1802`, `1.8.3`, `Release 0.14.0`, `v2.10.0`, and `2.28-r1209` respectively, confirming the environment works as documented.
