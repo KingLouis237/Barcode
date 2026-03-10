@@ -10,8 +10,8 @@ _Last updated: 7 March 2026_
 
 > **Canonical vs archival sources**
 > - This Markdown playbook is the **only maintained source of truth** for the BARCODE workflow. All new edits happen here.
-> - `BARCODE_project/WORKFLOW.html` is retained solely as a historical/raw log. It preserves original commands verbatim which was performed during the run but now carries a banner deferring to this document.
-> - `BARCODE_project/barcode_carousel.pdf` houses supporting figures (screenshots, graphs) of all outputs. Each step below points to the relevant slide as “Visual reference” where it meaningfully reinforces the text.
+- `BARCODE_project/WORKFLOW.html` is retained solely as a historical/raw log. It preserves the original commands verbatim and outputs of the pipeline but now carries a banner deferring to this document.
+- `BARCODE_project/barcode_carousel.pdf` houses the supporting figures (screenshots, graphs) for every stage. Visual callouts below reference specific slide pages of `barcode_carousel.pdf` so readers can cross-check the same artifact.
 
 ## How to Use This Playbook
 1. **Core Flow First** – Each step begins with a concise summary (goal, inputs, canonical command, expected files).
@@ -24,12 +24,20 @@ _Last updated: 7 March 2026_
 
 ## Repository Layout & Data Availability
 - Unless otherwise noted, commands assume your working directory is `BARCODE_project`.
-- The committed repository contains **derived outputs** only. The original raw FASTQ (`raw/barcode07.fq`) and full `assemblies/*` + `eval/16s/*` working folders are too large to ship; provide your own `raw/barcode07.fq` when rerunning assemblies.
-- Flattened copies of assembler FASTAs live under `Assembly/` (e.g., `Assembly/flye.fasta`). Use these when inspecting included results, or regenerate full `assemblies/flye/assembly.fasta` by rerunning the assembler commands.
-- 16S deliverables are stored in `16S anno_phylo/`. When the playbook references `eval/16s/*`, read it as “regenerate under `eval/16s`, or consult the saved files in `16S anno_phylo/`.”
-- Bandage PNGs (`Bandage Graphs/*.png`), BUSCO/QUAST/KAT outputs, BlastKOALA screenshots, and presentation/video assets are committed exactly as referenced.
+- **Raw reads live in `raw/`.** The repository ships `raw/barcode07.fq.gz`. Run `gzip -dk raw/barcode07.fq.gz` once so `raw/barcode07.fq` exists for all commands. Bring your own FASTQ only if you want to assemble another barcode.
+- **Heavy intermediates remain local.** Directories such as `assemblies/*`, `logs/*`, and `eval/16s/*` are omitted to keep the repo lightweight; regenerate them by rerunning the documented commands when you need the original logs.
+- **Flattened assemblies are included.** Each assembler’s final FASTA is copied into `Assembly/` (e.g., `Assembly/flye.fasta`) for quick comparisons; these mirror what rerunning the tools would produce under `assemblies/`.
+- 16S deliverables live in `16S anno_phylo/`. When the playbook references `eval/16s/*`, read it as “regenerate under `eval/16s`, or cross-check the committed files in `16S anno_phylo/`.”
+- Bandage PNGs (`Bandage Graphs/*.png`), BUSCO/QUAST/KAT outputs, BlastKOALA screenshots, and the supporting figure deck `barcode_carousel.pdf` are committed exactly as referenced.
 - Paths highlighted as missing during validation are documented in the **Local Validation – 7 Mar 2026** section at the end of this file.
 - `BARCODE_project/WORKFLOW.html` remains available if you need to see the original unedited command transcript; treat it as archival/raw data only.
+
+> **Raw input prep (run once per new clone)**
+> ```bash
+> gzip -dk raw/barcode07.fq.gz   # keep .gz and create raw/barcode07.fq
+> ls -lh raw/barcode07.fq        # confirm the ~390 Mb FASTQ exists
+> ```
+> After this, all downstream steps can reference `raw/barcode07.fq` directly.
 
 ## Workflow Overview
 | Stage | Reproducibility | Key Outputs |
@@ -43,7 +51,7 @@ _Last updated: 7 March 2026_
 | Bandage Graphs | 🟡 | `Bandage Graphs/*.png` |
 | 16S Extraction + Phylogeny | 🟢 | `16S anno_phylo/*` |
 | BlastKOALA Functional Annotation | 🟠 | `BlastKoala/Screenshot*.png` |
-| Presentation + Video Packaging | 🟠 | `Presentation_flot.pptx`, `Video_present_flot.mp4` |
+| Barcode Carousel Summary Deck | 🟠 | `barcode_carousel.pdf` |
 
 ---
 
@@ -82,7 +90,12 @@ done
 ## Step 1. Raw Read Quality Control (SeqKit) 🟢
 **Goal**: Verify barcode07 read yield, length distribution, and per-base quality before assembly.
 
-**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ). _This file is not bundled; place your own demultiplexed barcode07 FASTQ under `BARCODE_project/raw/` before running._
+**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ) generated locally from the committed `raw/barcode07.fq.gz`.
+
+> **Prep**
+> ```bash
+> gzip -dk raw/barcode07.fq.gz   # creates raw/barcode07.fq if it does not already exist
+> ```
 
 **Core Command**
 ```bash
@@ -117,7 +130,7 @@ GC(%)    = 41.29
 > - Unexpected GC peaks may indicate barcode bleed-through; re-check demultiplexing settings.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “Raw QC & Coverage” slide summarizes the SeqKit table and read-length violin plots that correspond to this step.
+> - `barcode_carousel.pdf`, p. 2 (“Raw QC & Coverage”) summarizes the SeqKit table and read-length violin plots that correspond to this step.
 
 ---
 
@@ -181,7 +194,7 @@ shasta --input raw/barcode07.fq \
 > - Shasta discards reads <10 kb; confirm with `ReadSummary.csv` that 9,968 reads remained. Low coverage explains missing BUSCOs later.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “Assembly comparison” slide juxtaposes Flye/Raven/Shasta contig layouts and karyotype-style bars that match the statistics above.
+> - `barcode_carousel.pdf`, p. 3 (“Assembly comparison”) juxtaposes Flye/Raven/Shasta contig layouts and karyotype-style bars that match the statistics above.
 
 ---
 
@@ -220,7 +233,7 @@ quast.py \
 > - If QUAST fails due to missing matplotlib backend, ensure you ran it inside `barcode-quast` env.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “QUAST metrics” slide reproduces the bar charts for contig counts, N50, and GC% taken from `quast_results/report.txt`.
+> - `barcode_carousel.pdf`, p. 4 (“QUAST metrics”) reproduces the bar charts for contig counts, N50, and GC% taken from `quast_results/report.txt`.
 
 ---
 
@@ -255,7 +268,7 @@ kat comp -o "KAT analysis/kat_flye" \
 > - KAT can require >32 GB RAM. Use `--threads 4` and subsample reads if memory constrained.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “KAT spectra” slide shows the exact `*.spectra-cn.png` plots for Flye/Raven/Shasta so readers can match the text with color-coded histograms.
+> - `barcode_carousel.pdf`, p. 5 (“KAT spectra”) shows the exact `*.spectra-cn.png` plots for Flye/Raven/Shasta so readers can match the text with color-coded histograms.
 
 ---
 
@@ -288,7 +301,7 @@ busco \
 > - On first run, BUSCO downloads `bacteria_odb10`; keep `~/.config/busco` cached to avoid repeated downloads.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “BUSCO completeness” slide mirrors the table in `Busco Analysis/busco_*/short_summary*.txt`, with bars for Complete/Fragmented/Missing metrics.
+- `barcode_carousel.pdf`, p. 6 (“BUSCO completeness”) mirrors the table in `Busco Analysis/busco_*/short_summary*.txt`, with bars for Complete/Fragmented/Missing metrics.
 
 ---
 
@@ -311,7 +324,7 @@ busco \
 > - Raven graph contains multiple branches, mirroring duplicated BUSCO findings.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “Bandage graphs” slide embeds the PNGs from `Bandage Graphs/*.png`, letting readers compare Flye/Raven/Shasta graph structures visually.
+> - `barcode_carousel.pdf`, p. 7 (“Bandage graphs”) embeds the PNGs from `Bandage Graphs/*.png`, letting readers compare Flye/Raven/Shasta graph structures visually.
 
 ---
 
@@ -358,7 +371,7 @@ busco \
 > - If `barrnap` produces no 16S hits, verify assembly coverage; missing rRNA operons often mean under-assembly or mis-annotation.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “16S phylogeny” slide shows the IQ-TREE consensus plus BLAST hit thumbnails corresponding to `16S anno_phylo/16S_tree.nwk` and the BLAST tables captured in `WORKFLOW.html`.
+> - `barcode_carousel.pdf`, p. 8 (“16S phylogeny”) shows the IQ-TREE consensus plus BLAST hit thumbnails corresponding to `16S anno_phylo/16S_tree.nwk` and the BLAST tables captured in `WORKFLOW.html`.
 
 ---
 
@@ -379,35 +392,37 @@ busco \
 > - Modules enriched for antibiotic resistance should match known *Acinetobacter* biology. Discrepancies may indicate contamination or annotation errors.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – “BlastKOALA pathways” slide contains cropped screenshots from `BlastKoala/Screenshot (260-262).png`, matching the modules discussed here.
+> - `barcode_carousel.pdf`, p. 9 (“BlastKOALA pathways”) contains cropped screenshots from `BlastKoala/Screenshot (260-262).png`, matching the modules discussed here.
 
 ---
 
-## Step 9. Presentation & Video Packaging 🟠
-**Goal**: Communicate findings via `Presentation_flot.pptx` and `Video_present_flot.mp4`.
+## Step 9. Barcode Carousel Summary Deck 🟠
+**Goal**: Maintain `barcode_carousel.pdf` as a concise, shareable visual narrative of the workflow for talks, posts, or peer briefings.
 
-**Status**: Manual editing/recording; files live at the project root.
+**Status**: Manual editing (PowerPoint/Keynote/Canva). The exported PDF is committed so collaborators can cite slide numbers without rebuilding the deck.
 
-> **Note**: These artifacts summarize the workflow but are not scriptable, so they remain 🟠.
+> **Maintenance Tips**
+> - When underlying metrics change, update the relevant slide(s) and re-export the PDF.
+> - Keep layout minimal and annotate plots with the same labels used in this playbook to preserve traceability.
 
 > **Visual reference**
-> - `barcode_carousel.pdf` – closing slide previews the talk/video thumbnails to illustrate how findings were communicated.
+> - `barcode_carousel.pdf`, p. 10 (“Summary checkpoints”) distills the headline conclusions referenced throughout this playbook.
 
 ---
 
 ## Final Scope Statement
 - **This workflow _is_** a transparent, audit-grade, beginner-friendly tutorial for assembling and evaluating a single bacterial isolate (`barcode07`) from Nanopore data, complete with exact commands, environments, interpretations, and sanity checks.
-- **This workflow _is not_** a hosted web platform, multi-species pipeline, or fully automated service. Manual/external steps (BlastKOALA, presentation design, some Bandage usages) must still be redone manually. Scaling to other organisms or barcodes requires re-running the documented steps and adjusting parameters accordingly.
+- **This workflow _is not_** a hosted web platform, multi-species pipeline, or fully automated service. Manual/external steps (BlastKOALA submissions, Bandage PNG exports, barcode carousel layout tweaks) must still be redone manually. Scaling to other organisms or barcodes requires re-running the documented steps and adjusting parameters accordingly.
 
 ## Next Steps & Adaptation Tips
-1. Swap `raw/barcode07.fq` for other demultiplexed FASTQ files; keep folder structure identical and rerun from Step 1.
+1. Swap `raw/barcode07.fq.gz` (and the decompressed `raw/barcode07.fq`) for other demultiplexed FASTQ files; keep folder structure identical and rerun from Step 1.
 2. Add polishing (e.g., Medaka, Racon) if short-read data or higher accuracy is required—extend the playbook in new sections.
 3. Once validated, wrap commands into Snakemake/Nextflow or a web interface, but retain this Markdown as the canonical reproducibility record.
 
 ## Local Validation – 7 Mar 2026
 **File Path Audit**
-- ✅ `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`.
-- ⚠️ `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Use your own FASTQ + rerun the pipeline to create them, or rely on the summarized artifacts noted above.
+- ✅ `raw/barcode07.fq.gz`, `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`, `barcode_carousel.pdf`.
+- ⚠️ Decompressed `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Run `gzip -dk raw/barcode07.fq.gz` and re-execute the workflow to regenerate them, or rely on the summarized artifacts noted above.
 
 **Environment Creation Attempts**
 - `conda --version` and `micromamba --version` are unavailable in the current validation environment, so the Conda envs listed in `envs/*.yml` could not be materialized here. Ensure Conda/Miniforge or Micromamba is installed locally before running `conda env create -f ...`.
