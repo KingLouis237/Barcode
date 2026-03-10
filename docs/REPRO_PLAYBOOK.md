@@ -10,8 +10,8 @@ _Last updated: 7 March 2026_
 
 > **Canonical vs archival sources**
 > - This Markdown playbook is the **only maintained source of truth** for the BARCODE workflow. All new edits happen here.
-> - `BARCODE_project/WORKFLOW.html` is retained solely as a historical/raw log. It preserves original commands verbatim but now carries a banner deferring to this document.
-> - `BARCODE_project/barcode_carousel.pdf` houses supporting figures (screenshots, graphs). Each step below points to the relevant slide as “Visual reference” where it meaningfully reinforces the text.
+> - `BARCODE_project/WORKFLOW.html` is retained solely as a historical/raw log. It preserves original commands verbatim which was performed during the run but now carries a banner deferring to this document.
+> - `BARCODE_project/barcode_carousel.pdf` houses supporting figures (screenshots, graphs) of all outputs. Each step below points to the relevant slide as “Visual reference” where it meaningfully reinforces the text.
 
 ## How to Use This Playbook
 1. **Core Flow First** – Each step begins with a concise summary (goal, inputs, canonical command, expected files).
@@ -24,11 +24,10 @@ _Last updated: 7 March 2026_
 
 ## Repository Layout & Data Availability
 - Unless otherwise noted, commands assume your working directory is `BARCODE_project`.
-- **Raw reads ship in compressed form.** The repo includes `raw/barcode07.fq.gz`. Run `gzip -dk raw/barcode07.fq.gz` once at the start of any session so that `raw/barcode07.fq` exists for all commands. You do _not_ need to supply your own FASTQ unless you want to test a different barcode.
-- **Intermediate working folders are intentionally absent.** Directories such as `assemblies/*`, `logs/*`, and `eval/16s/*` are large, so regenerate them locally by rerunning the documented commands whenever you need the full context.
-- **Reference FASTAs are flattened for convenience.** The repo keeps one copy of each assembler’s final FASTA under `Assembly/` (e.g., `Assembly/flye.fasta`). These mirror what you would find in `assemblies/flye/assembly.fasta` after rerunning Flye.
+- The committed repository contains **derived outputs** only. The original raw FASTQ (`raw/barcode07.fq`) and full `assemblies/*` + `eval/16s/*` working folders are too large to ship; provide your own `raw/barcode07.fq` when rerunning assemblies.
+- Flattened copies of assembler FASTAs live under `Assembly/` (e.g., `Assembly/flye.fasta`). Use these when inspecting included results, or regenerate full `assemblies/flye/assembly.fasta` by rerunning the assembler commands.
 - 16S deliverables are stored in `16S anno_phylo/`. When the playbook references `eval/16s/*`, read it as “regenerate under `eval/16s`, or consult the saved files in `16S anno_phylo/`.”
-- Bandage PNGs (`Bandage Graphs/*.png`), BUSCO/QUAST/KAT outputs, BlastKOALA screenshots, and the curated visual deck `barcode_carousel.pdf` are committed exactly as referenced for crosschecking.
+- Bandage PNGs (`Bandage Graphs/*.png`), BUSCO/QUAST/KAT outputs, BlastKOALA screenshots, and presentation/video assets are committed exactly as referenced.
 - Paths highlighted as missing during validation are documented in the **Local Validation – 7 Mar 2026** section at the end of this file.
 - `BARCODE_project/WORKFLOW.html` remains available if you need to see the original unedited command transcript; treat it as archival/raw data only.
 
@@ -83,12 +82,7 @@ done
 ## Step 1. Raw Read Quality Control (SeqKit) 🟢
 **Goal**: Verify barcode07 read yield, length distribution, and per-base quality before assembly.
 
-**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ) generated locally by decompressing the committed `raw/barcode07.fq.gz`.
-
-> **Prep**
-> ```bash
-> gzip -dk raw/barcode07.fq.gz   # leaves the compressed file in place while creating raw/barcode07.fq
-> ```
+**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ). _This file is not bundled; place your own demultiplexed barcode07 FASTQ under `BARCODE_project/raw/` before running._
 
 **Core Command**
 ```bash
@@ -406,14 +400,14 @@ busco \
 - **This workflow _is not_** a hosted web platform, multi-species pipeline, or fully automated service. Manual/external steps (BlastKOALA, presentation design, some Bandage usages) must still be redone manually. Scaling to other organisms or barcodes requires re-running the documented steps and adjusting parameters accordingly.
 
 ## Next Steps & Adaptation Tips
-1. Swap `raw/barcode07.fq.gz` (plus its decompressed companion `raw/barcode07.fq`) for other demultiplexed FASTQ files; keep folder structure identical and rerun from Step 1.
+1. Swap `raw/barcode07.fq` for other demultiplexed FASTQ files; keep folder structure identical and rerun from Step 1.
 2. Add polishing (e.g., Medaka, Racon) if short-read data or higher accuracy is required—extend the playbook in new sections.
 3. Once validated, wrap commands into Snakemake/Nextflow or a web interface, but retain this Markdown as the canonical reproducibility record.
 
 ## Local Validation – 7 Mar 2026
 **File Path Audit**
-- ✅ `raw/barcode07.fq.gz`, `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`, `Presentation_flot.pptx`, `Video_present_flot.mp4`.
-- ⚠️ The decompressed `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Produce them by running `gzip -dk raw/barcode07.fq.gz` and re-executing the workflow, or rely on the summarized artifacts noted above.
+- ✅ `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`.
+- ⚠️ `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Use your own FASTQ + rerun the pipeline to create them, or rely on the summarized artifacts noted above.
 
 **Environment Creation Attempts**
 - `conda --version` and `micromamba --version` are unavailable in the current validation environment, so the Conda envs listed in `envs/*.yml` could not be materialized here. Ensure Conda/Miniforge or Micromamba is installed locally before running `conda env create -f ...`.
