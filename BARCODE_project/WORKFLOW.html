@@ -23,11 +23,11 @@ ul { padding-left: 1.25rem; }
 </style>
 </head>
 <body>
-<div class="legacy-banner">Legacy log only ? consult <code>../docs/REPRO_PLAYBOOK.md</code> for the maintained playbook.</div>
+<div class="legacy-banner">Legacy log only -- consult <code>../docs/REPRO_PLAYBOOK.md</code> for the maintained playbook.</div>
 <main>
 <section id="overview">
 <h1>ONT Barcode07 Legacy Workflow Log</h1>
-<p>xProject: Genome Assembly ? Date: 11 August 2025 ? Machine: WSL Ubuntu on Windows ? Raw reads: <code>raw/barcode07.fq</code> (ONT, decompressed from the committed <code>raw/barcode07.fq.gz</code>) ? Assemblers: Flye, Raven, Shasta.</p>
+<p>xProject: Genome Assembly | Date: 11 August 2025 | Machine: WSL Ubuntu on Windows | Raw reads: <code>raw/barcode07.fq</code> (ONT, decompressed from the committed <code>raw/barcode07.fq.gz</code>) | Assemblers: Flye, Raven, Shasta.</p>
 <p>This HTML is preserved as a historical transcript of the exact commands and outputs. Refer to <code>docs/REPRO_PLAYBOOK.md</code> for the actively maintained, beginner-friendly guide.</p>
 </section>
 <section id="tool-versions">
@@ -44,7 +44,7 @@ seqkit v2.10.0</code></pre></div>
 <div class="block output"><h3>Output</h3><pre><code>file              format  type  num_seqs      sum_len  min_len  avg_len  max_len     Q1     Q2      Q3  sum_gap     N50  N50_num  Q20(%)  Q30(%)  AvgQual  GC(%)  sum_n
 raw/barcode07.fq  FASTQ   DNA     37,054  392,624,046      462   10,596  165,410  3,525  4,294  10,991        0  24,577    4,324   83.98   57.02    16.96  41.29      0</code></pre></div>
 <div class="block interpretation"><h3>Interpretation</h3><ul>
-<li>37,054 reads totaling 392.6 Mb (average 10.6 kb) yield ?104? coverage (392,624,046 / 3,780,699).</li>
+<li>37,054 reads totaling 392.6 Mb (average 10.6 kb) yield ~104x coverage (392,624,046 / 3,780,699).</li>
 <li>Read N50 = 24.6 kb indicates sufficient long fragments to bridge repeats.</li>
 <li>Q20 (83.98%) and Q30 (57.02%) show adequate base quality for Flye polishing.</li>
 <li>GC content (~41%) matches <em>Acinetobacter</em> genomes, suggesting minimal contamination.</li>
@@ -69,10 +69,10 @@ drwxr-xr-x 1 abane_ashu abane_ashu   512 Aug 12 21:01 40-polishing
 total_len = 3,780,699 bp
 N50 = 3,773,355 bp
 largest = 3,773,355 bp
-mean_cov = 85?</code></pre></div>
+mean_cov = 85x</code></pre></div>
 <div class="block interpretation"><h3>Interpretation</h3><ul>
 <li>Two contigs correspond to a dominant 3.77 Mb chromosome plus a minor contig (plasmid/residual fragment).</li>
-<li>85? coverage and large N50 confirm excellent contiguity; polishing reduced alignment error from ?3.7% to ?2.4%.</li>
+<li>85x coverage and large N50 confirm excellent contiguity; polishing reduced alignment error from ~3.7% to ~2.4%.</li>
 <li><code>--plasmids</code> was intentionally omitted because it is deprecated; plasmid detection is deferred to specialized tools.</li>
 </ul></div>
 </section>
@@ -176,7 +176,7 @@ grep "contigs" eval/quast/report.tsv</code></pre></div>
 <div class="block interpretation"><h3>Notes</h3><ul>
 <li>The <code>-P</code> regex did not match the contig row on this build, so a simple <code>grep "contigs"</code> was used.</li>
 <li><strong>Flye</strong> achieved the highest N50 with the fewest contigs.</li>
-<li><strong>Raven</strong> matched Flye?s N50 but produced 28 contigs, indicating unresolved repeats.</li>
+<li><strong>Raven</strong> matched Flye's N50 but produced 28 contigs, indicating unresolved repeats.</li>
 <li><strong>Shasta</strong> had the lowest N50 and required four contigs to reach half the genome.</li>
 </ul></div>
 </section>
@@ -184,7 +184,7 @@ grep "contigs" eval/quast/report.tsv</code></pre></div>
 <h2>K-mer Analysis with KAT</h2>
 <div class="block interpretation"><h3>Reason for Method Choice</h3><ul>
 <li>KAT compares read k-mers against assemblies to measure completeness and detect erroneous sequence.</li>
-<li>A dedicated <code>kat_env</code> was created because KAT?s dependencies conflicted with other environments.</li>
+<li>A dedicated <code>kat_env</code> was created because KAT's dependencies conflicted with other environments.</li>
 <li><code>kat comp</code> was run per assembler to produce <code>.mx</code>, <code>.stats</code>, and spectra plots.</li>
 </ul></div>
 <div class="block command"><h3>Flye Command</h3><pre><code>kat comp   -o ~/flot_project/eval/kat_flye   ~/flot_project/raw/barcode07.fq   ~/flot_project/assemblies/flye/assembly.fasta</code></pre></div>
@@ -341,14 +341,14 @@ Utg1930:37498-39035(-)  AB642256        99.543  1533    1537    100     2791    
 18:21581-23115(+)       KT964444        99.608  1530    1534    100     2791    Acinetobacter baumannii strain HNHB02 16S ribosomal RNA gene, partial sequence
 18:21581-23115(+)       PQ722327        99.672  1526    1534    99      2789    Acinetobacter baumannii strain Aci_bau1 16S ribosomal RNA gene, partial sequence</code></pre></div>
 <div class="block interpretation"><h3>Interpretation &amp; Key Insight</h3><p>
-This comparative analysis highlights distinct assembler behavior. Flye generated the most contiguous genome (N50 ? 3.77 Mb, two contigs), near-complete k-mer recovery (99.85% by KAT), and high BUSCO completeness (98.4% with no duplication), supported by a clean circular graph. Raven matched Flye?s N50 but produced 28 contigs and exhibited a BUSCO duplication rate of 44.4%, suggesting unresolved repeats despite excellent k-mer completeness (99.90%). Shasta was most fragmented (N50 ? 437 kb, BUSCO 78.2%, KAT completeness 88.41%) yet shared the same top 16S BLASTN hit as Flye (<em>Acinetobacter baumannii</em>, ~100% identity). Raven?s divergence (<em>Klebsiella pneumoniae</em>) despite strong completeness underscores that single-gene taxonomic inference can be skewed by assembly artifacts. Highly conserved loci can remain intact even in fragmented assemblies when coverage is sufficient, so integrating QUAST, KAT, BUSCO, Bandage, BLASTN, and phylogeny is essential.
+This comparative analysis highlights distinct assembler behavior. Flye generated the most contiguous genome (N50 ~ 3.77 Mb, two contigs), near-complete k-mer recovery (99.85% by KAT), and high BUSCO completeness (98.4% with no duplication), supported by a clean circular graph. Raven matched Flye's N50 but produced 28 contigs and exhibited a BUSCO duplication rate of 44.4%, suggesting unresolved repeats despite excellent k-mer completeness (99.90%). Shasta was most fragmented (N50 ~ 437 kb, BUSCO 78.2%, KAT completeness 88.41%) yet shared the same top 16S BLASTN hit as Flye (<em>Acinetobacter baumannii</em>, ~100% identity). Raven's divergence (<em>Klebsiella pneumoniae</em>) despite strong completeness underscores that single-gene taxonomic inference can be skewed by assembly artifacts. Highly conserved loci can remain intact even in fragmented assemblies when coverage is sufficient, so integrating QUAST, KAT, BUSCO, Bandage, BLASTN, and phylogeny is essential.
 </p>
-<p><strong>Key insight:</strong> Shasta?Flye convergence on 16S identity, despite Shasta?s lower completeness, shows that conserved loci may survive fragmentation, whereas Raven?s duplication can mislead locus-specific inference. Genome-wide metrics and single-locus analyses must therefore be interpreted together.</p>
+<p><strong>Key insight:</strong> Shasta-Flye convergence on 16S identity, despite Shasta's lower completeness, shows that conserved loci may survive fragmentation, whereas Raven's duplication can mislead locus-specific inference. Genome-wide metrics and single-locus analyses must therefore be interpreted together.</p>
 </section>
 <section id="blastkoala">
 <h2>Genome Annotation and Metabolic Capacity Analysis (Prokka + BlastKOALA)</h2>
 <h3>1. Environment Setup</h3>
-<p>We created a dedicated Conda environment to keep Prokka?s dependencies isolated:</p>
+<p>We created a dedicated Conda environment to keep Prokka's dependencies isolated:</p>
 <div class="block command"><pre><code>conda create -n annotation_env -c bioconda -c conda-forge prokka
 conda activate annotation_env</code></pre></div>
 <h3>2. Running Prokka</h3>
@@ -359,7 +359,7 @@ prokka ~/flot_project/assemblies/shasta/assembly.fasta   --outdir ~/flot_project
 <h3>3. Key Output: <code>.faa</code> Files</h3>
 <ul>
 <li>Contain all predicted protein sequences.</li>
-<li>Serve as input for KEGG?s BlastKOALA via KO assignments.</li>
+<li>Serve as input for KEGG's BlastKOALA via KO assignments.</li>
 <li>Enable mapping to metabolic pathways.</li>
 </ul>
 <h3>4. Preparing Files for BlastKOALA</h3>
@@ -367,7 +367,7 @@ prokka ~/flot_project/assemblies/shasta/assembly.fasta   --outdir ~/flot_project
 cp ~/flot_project/eval/annotation/raven_prokka/raven.faa /mnt/c/Users/Louis/Downloads/
 cp ~/flot_project/eval/annotation/shasta_prokka/shasta.faa /mnt/c/Users/Louis/Downloads/</code></pre></div>
 <h3>5. Running BlastKOALA</h3>
-<p>Each <code>.faa</code> file was uploaded to KEGG?s BlastKOALA (<a href="http://www.kegg.jp/blastkoala/">refprok.pep database</a>). BlastKOALA assigns KO terms and groups proteins into KEGG categories.</p>
+<p>Each <code>.faa</code> file was uploaded to KEGG's BlastKOALA (<a href="http://www.kegg.jp/blastkoala/">refprok.pep database</a>). BlastKOALA assigns KO terms and groups proteins into KEGG categories.</p>
 <h3>6. Results and Observations</h3>
 <ul>
 <li><strong>Flye (Acinetobacter baumannii)</strong>: 3,425 proteins predicted; 1,966 annotated (57.4%). Major categories include signaling, genetic information processing, carbohydrate/amino acid metabolism, and environmental processing.</li>
