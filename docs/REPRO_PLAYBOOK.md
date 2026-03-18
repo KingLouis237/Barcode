@@ -28,7 +28,7 @@ _Last updated: 7 March 2026_
 
 ## Repository Layout & Data Availability
 - Unless otherwise noted, commands assume your working directory is `BARCODE_project`.
-- **Raw reads live in `raw/`.** The repository ships `raw/barcode07.fq.gz`. Run `gzip -dk raw/barcode07.fq.gz` once so `raw/barcode07.fq` exists for all commands. Bring your own FASTQ only if you want to assemble another barcode.
+- **Raw reads live in `raw/`.** The GitHub repo no longer tracks the Nanopore FASTQ because of its size. Place your own `raw/barcode07.fq.gz` under `BARCODE_project/raw/`, then run `gzip -dk raw/barcode07.fq.gz` once so `raw/barcode07.fq` exists for all commands. This same pattern applies if you substitute another barcode.
 - **Heavy intermediates remain local.** Directories such as `assemblies/*`, `logs/*`, and `eval/16s/*` are omitted to keep the repo lightweight; regenerate them by rerunning the documented commands when you need the original logs.
 - **Flattened assemblies are included.** Each assembler’s final FASTA is copied into `Assembly/` (e.g., `Assembly/flye.fasta`) for quick comparisons; these mirror what rerunning the tools would produce under `assemblies/`.
 - 16S deliverables live in `16S anno_phylo/`. When the playbook references `eval/16s/*`, read it as “regenerate under `eval/16s`, or cross-check the committed files in `16S anno_phylo/`.”
@@ -38,6 +38,7 @@ _Last updated: 7 March 2026_
 
 > **Raw input prep (run once per new clone)**
 > ```bash
+> # copy or download barcode07 FASTQ locally, then:
 > gzip -dk raw/barcode07.fq.gz   # keep .gz and create raw/barcode07.fq
 > ls -lh raw/barcode07.fq        # confirm the ~390 Mb FASTQ exists
 > ```
@@ -106,7 +107,7 @@ done
 ## Step 1. Raw Read Quality Control (SeqKit) 🟢
 **Goal**: Verify barcode07 read yield, length distribution, and per-base quality before assembly.
 
-**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ) generated locally from the committed `raw/barcode07.fq.gz`.
+**Inputs**: `raw/barcode07.fq` (ONT basecalled FASTQ) generated locally from your copy of `raw/barcode07.fq.gz` placed under `BARCODE_project/raw/`.
 
 > **Prep**
 > ```bash
@@ -657,14 +658,14 @@ Bandage image assemblies/flye/assembly_graph.gfa "Bandage Graphs/flye_graph.png"
 - **This workflow _is not_** a hosted web platform, multi-species pipeline, or fully automated service. Manual/external steps (BlastKOALA submissions, Bandage PNG exports, barcode carousel layout tweaks) must still be redone manually. Scaling to other organisms or barcodes requires re-running the documented steps and adjusting parameters accordingly.
 
 ## Next Steps & Adaptation Tips
-1. Swap `raw/barcode07.fq.gz` (and the decompressed `raw/barcode07.fq`) for other demultiplexed FASTQ files; keep folder structure identical and rerun from Step 1.
+1. Supply `raw/barcode07.fq.gz` (and the decompressed `raw/barcode07.fq`) locally for any barcode you wish to assemble; keep folder structure identical and rerun from Step 1.
 2. Add polishing (e.g., Medaka, Racon) if short-read data or higher accuracy is required—extend the playbook in new sections.
 3. Once validated, wrap commands into Snakemake/Nextflow or a web interface, but retain this Markdown as the canonical reproducibility record.
 
 ## Local Validation – 7 Mar 2026
 **File Path Audit**
-- ✅ `raw/barcode07.fq.gz`, `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`, `barcode_carousel.pdf`.
-- ⚠️ Decompressed `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Run `gzip -dk raw/barcode07.fq.gz` and re-execute the workflow to regenerate them, or rely on the summarized artifacts noted above.
+- ✅ `Assembly/*.fasta`, `Bandage Graphs/*.png`, `Busco Analysis/*`, `KAT analysis/*`, `quast_results/*`, `16S anno_phylo/*`, `BlastKoala/Screenshot*.png`, `barcode_carousel.pdf`.
+- ⚠️ `raw/barcode07.fq.gz`, `raw/barcode07.fq`, `assemblies/*`, `logs/*`, and `eval/16s/*` are **not** present in the committed repository. Copy the FASTQ locally into `raw/`, run `gzip -dk raw/barcode07.fq.gz`, and re-execute the workflow to regenerate downstream artifacts, or rely on the summarized outputs noted above.
 
 **Environment Creation Attempts**
 - `conda --version` and `micromamba --version` are unavailable in the current validation environment, so the Conda envs listed in `envs/*.yml` could not be materialized here. Ensure Conda/Miniforge or Micromamba is installed locally before running `conda env create -f ...`.
