@@ -1,0 +1,4 @@
+raw/*.fq.gz
+raw/*.fastq.gz
+raw/*.fq
+raw/*.fastq
