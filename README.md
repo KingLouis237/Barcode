@@ -17,7 +17,7 @@ BARCODE/
 │   ├── 16S anno_phylo/      # 16S extraction + IQ-TREE outputs
 │   ├── raw/                 # you supply `barcode07.fq.gz`; `.gitkeep` keeps the folder in Git
 │   ├── WORKFLOW.html        # archival command log (defers to the Markdown playbook)
-│   └── barcode_carousel.pdf # legacy carousel (older version)
+│   └── barcode_carousel.pdf # legacy carousel containing screenshots of every step of the workflow
 ├── docs/
 │   ├── REPRO_PLAYBOOK.md    # canonical Markdown playbook (maintained)
 │   └── Barcode07_...pdf     # current 7-slide scientific carousel
@@ -28,8 +28,8 @@ BARCODE/
 ## Prerequisites
 
 - Linux shell (WSL Ubuntu works) with Conda or Micromamba.
-- Ability to download or otherwise supply the barcode07 FASTQ locally.  
-  Place `barcode07.fq.gz` under `BARCODE_project/raw/`. The file is **not** tracked in Git history.
+- Ability to download or otherwise supply the barcodeXX FASTQ locally.  
+  Place `barcode07.fq.gz` under `BARCODE_project/raw/`. The file is **not** tracked in Git history because of size constraints.
 - Internet access for BUSCO lineage downloads, BlastKOALA uploads, etc.
 
 ## Quick Start
@@ -56,7 +56,7 @@ BARCODE/
 4. **Follow `docs/REPRO_PLAYBOOK.md`**
    - Step 1: SeqKit stats (`barcode-assembly` env) → `raw/seqkit_stats.txt`.
    - Step 2: Run Flye, Raven, Shasta; find flattened FASTAs in `Assembly/`.
-   - Step 3–4: `barcode-quast` / `barcode-kat` envs for QUAST + KAT reports.
+   - Step 3-4: `barcode-quast` / `barcode-kat` envs for QUAST + KAT reports.
    - Step 5: BUSCO (bacteria_odb10 lineage) → `Busco Analysis/`.
    - Step 6: Bandage image exports (`Bandage Graphs/*.png` already committed).
    - Step 7: 16S extraction + IQ-TREE (barrnap → MAFFT → TrimAl → IQ-TREE).
@@ -68,7 +68,7 @@ BARCODE/
 - **Transparency:** Every command and flag is documented in the playbook.  
 - **Reproducibility:** Modular Conda envs + local raw FASTQ path; committed outputs (Assembly, BUSCO, KAT, etc.) provide reference checkpoints.  
 - **Interpretability:** QUAST/KAT/BUSCO/Bandage/16S/KEGG are all included so you can reason about assemblies, not just run them.  
-- **Manual honesty:** External or GUI steps (Bandage, BlastKOALA) are labeled 🟡/🟠 in the playbook so readers know what remains hands-on.
+- **Manual honesty:** External or GUI steps (Bandage, BlastKOALA) are labeled 🟡/🟠 in the playbook so readers know what remains hands-on. This was done to also enhance understanding of underlying steps.
 
 ## Artifacts for Sharing
 
